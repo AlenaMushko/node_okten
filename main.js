@@ -1,19 +1,35 @@
 const path = require('path');
 const fs = require('fs');
 
-const hwFolder = path.join(__dirname, 'hw_1')
-// fs.mkdir(hwFolder, (err)=>{
-//     if(err) {
-//         console.log(err.message);
-//         throw new Error(err.message);
+const hwFolder = path.join(__dirname, 'hw_1');
+
+fs.mkdir(hwFolder, { recursive: true }, (err) => {
+    if (err) {
+        console.log(err.message);
+        throw new Error(err.message);
+    }
+    console.log('Directory created successfully!');
+});
+
+// fs.access(hwFolder, fs.constants.F_OK, (err) => {
+//     if (err) {
+//         fs.mkdir(hwFolder, (err) => {
+//             if (err) {
+//                 console.log(err.message);
+//                 throw new Error(err.message);
+//             }
+//             console.log('Folder created successfully');
+//         });
+//     } else {
+//         console.log('Folder already exists');
 //     }
 // });
 
-const createFolders = (n)=>{
-    for (let i = 1; i <= n ; i++) {
-        const folderPath = path.join(hwFolder, 'folder'+i);
-        fs.mkdir(folderPath, (err)=>{
-            if(err) {
+const createFolders = (n) => {
+    for (let i = 1; i <= n; i++) {
+        const folderPath = path.join(hwFolder, 'folder' + i);
+        fs.mkdir(folderPath,{ recursive: true },(err) => {
+            if (err) {
                 console.log(err.message);
                 throw new Error(err.message);
             }
@@ -21,23 +37,31 @@ const createFolders = (n)=>{
     }
 };
 
-const createFails = (n)=>{
-    for (let i = 1; i <=n ; i++) {
-        const filePath = path.join(hwFolder, 'file'+i+'.txt')
-fs.writeFile(filePath, ' ', (err)=>{
-    if(err) {
-        console.log(err.message);
-        throw new Error(err.message);
-    }
-})
+const createFails = (n) => {
+    for (let i = 1; i <= n; i++) {
+        const filePath = path.join(hwFolder, 'file' + i + '.txt');
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                fs.writeFile(filePath, ' ', (err) => {
+                    if (err) {
+                        console.log(err.message);
+                        throw new Error(err.message);
+                    }
+                })
+            } else {
+                console.log('File already exists');
+            }
+        });
+
     }
 }
 
-// createFolders(5);
-// createFails(5);
+createFolders(5);
+createFails(5);
+
 
 const readFolderOrFile = () => {
-    fs.readdir(hwFolder,  { withFileTypes: true },(err, files) => {
+    fs.readdir(hwFolder, {withFileTypes: true}, (err, files) => {
         if (err) {
             console.log(err.message);
             throw new Error(err.message);
@@ -120,4 +144,3 @@ readFolderOrFile();
 // fs.unlink(filePath,(err)=>{
 //     if(err) throw new Error(err.message);
 // })
-
