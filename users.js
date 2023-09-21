@@ -6,7 +6,8 @@ const { nanoid } = require("nanoid");
 const path = require('path');
 const fs = require('fs/promises');
 
-const {updateUserSchema, userSchema} = require('./validations/index')
+const {updateUserSchema, userSchema} = require('./validations/index');
+
 const usersPath = path.join(__dirname, 'users.json');
 
 async function getUsers() {
@@ -28,9 +29,16 @@ router.get('/users', async (req, res) => {
 });
 router.get('/users/:id', async (req, res) => {
     try {
-        const {id} = req.params;
         const users = await getUsers();
-        res.status(200).json({data: users[+id]})
+        const {id} = req.params;
+
+        const userIndex = users.findIndex(user => user.id === id);
+
+        if (userIndex === -1) {
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        res.status(200).json({data: users[userIndex]})
     } catch (error) {
         console.log(error);
     }
@@ -70,8 +78,8 @@ router.put('/users/:id', async (req, res) => {
             return res.status(404).json({message: 'User not found'});
         }
 
-        const updatedUser = {id: userIndex, ...value};
-        users[+id] = updatedUser;
+        const updatedUser = {id, ...value};
+        users[userIndex] = updatedUser;
 
         fs.writeFile(usersPath, JSON.stringify(users, null, 2));
         res.status(200).json({message: 'User is updated', user: updatedUser})
@@ -97,8 +105,9 @@ router.patch('/users/:id', async (req, res) => {
         }
 
         const currentUser = users[userIndex]
+        console.log(currentUser)
         const updatedUser = {...currentUser, ...value};
-        users[+id] = updatedUser;
+        users[userIndex] = updatedUser;
 
         fs.writeFile(usersPath, JSON.stringify(users, null, 2));
         res.status(200).json({message: 'User is updated', user: updatedUser})
@@ -120,6 +129,7 @@ router.delete('/users/:id', async (req, res) => {
         }
 
         users.splice(userIndex, 1);
+
         fs.writeFile(usersPath, JSON.stringify(users, null, 2));
         res.status(200).json({message: `User id=${id} is deleted`})
 
