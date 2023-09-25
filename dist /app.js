@@ -9,9 +9,9 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 const PORT = 5005;
-app.use('/', users_1.usersRouter);
+app.use("/", users_1.usersRouter);
 app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
+    res.status(404).json({ message: "Not found" });
 });
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
