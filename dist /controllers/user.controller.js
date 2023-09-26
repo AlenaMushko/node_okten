@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
 const errors_1 = require("../errors");
-const models_1 = require("../models");
+const services_1 = require("../services");
 const validations_1 = require("../validations");
 class UserController {
     async findAll(req, res, next) {
         try {
-            const users = await models_1.User.find();
-            return res.json(users);
+            const users = await services_1.userService.findAll();
+            return res.status(200).json(users);
         }
         catch (e) {
             next(e);
@@ -20,7 +20,7 @@ class UserController {
             if (error) {
                 throw new errors_1.ApiError("Validation failed", 400);
             }
-            const newUser = await models_1.User.create({ ...value });
+            const newUser = await services_1.userService.create(value);
             return res
                 .status(201)
                 .json({ message: "User is created", user: newUser });
@@ -32,7 +32,7 @@ class UserController {
     async findById(req, res, next) {
         try {
             const { id } = req.params;
-            const user = await models_1.User.findById(id);
+            const user = await services_1.userService.findById(id);
             return res.status(200).json({ data: user });
         }
         catch (error) {
@@ -43,7 +43,7 @@ class UserController {
         try {
             const { id } = req.params;
             const { value } = validations_1.userSchema.validate(req.body);
-            const updatedUser = await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true });
+            const updatedUser = await services_1.userService.updateByIdPut(id, value);
             return res
                 .status(200)
                 .json({ message: "User is updated", user: updatedUser });
@@ -56,7 +56,7 @@ class UserController {
         try {
             const { id } = req.params;
             const { value } = validations_1.updateUserSchema.validate(req.body);
-            const updatedUser = await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true });
+            const updatedUser = await services_1.userService.updateByIdPatch(id, value);
             return res
                 .status(200)
                 .json({ message: "User is updated", user: updatedUser });
@@ -68,7 +68,7 @@ class UserController {
     async deleteById(req, res, next) {
         try {
             const { id } = req.params;
-            await models_1.User.deleteOne({ _id: id });
+            await services_1.userService.deleteById(id);
             return res.status(200).json({ message: `User id=${id} is deleted` });
         }
         catch (e) {

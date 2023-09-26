@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
-import { User } from "../models";
+import { userService } from "../services";
 import { IUser } from "../types";
 import { updateUserSchema, userSchema } from "../validations";
 
@@ -12,9 +12,9 @@ class UserController {
     next: NextFunction,
   ): Promise<Response<IUser[]> | undefined> {
     try {
-      const users = await User.find();
+      const users = await userService.findAll();
 
-      return res.json(users);
+      return res.status(200).json(users);
     } catch (e) {
       next(e);
     }
@@ -32,7 +32,7 @@ class UserController {
         throw new ApiError("Validation failed", 400);
       }
 
-      const newUser = await User.create({ ...value });
+      const newUser = await userService.create(value);
 
       return res
         .status(201)
@@ -50,7 +50,7 @@ class UserController {
     try {
       const { id } = req.params;
 
-      const user = await User.findById(id);
+      const user = await userService.findById(id);
 
       return res.status(200).json({ data: user });
     } catch (error) {
@@ -67,11 +67,7 @@ class UserController {
       const { id } = req.params;
       const { value } = userSchema.validate(req.body);
 
-      const updatedUser = await User.findByIdAndUpdate(
-        id,
-        { ...value },
-        { new: true },
-      );
+      const updatedUser = await userService.updateByIdPut(id, value);
 
       return res
         .status(200)
@@ -90,11 +86,7 @@ class UserController {
       const { id } = req.params;
       const { value } = updateUserSchema.validate(req.body);
 
-      const updatedUser = await User.findByIdAndUpdate(
-        id,
-        { ...value },
-        { new: true },
-      );
+      const updatedUser = await userService.updateByIdPatch(id, value);
 
       return res
         .status(200)
@@ -112,7 +104,7 @@ class UserController {
     try {
       const { id } = req.params;
 
-      await User.deleteOne({ _id: id });
+      await userService.deleteById(id);
 
       return res.status(200).json({ message: `User id=${id} is deleted` });
     } catch (e) {
