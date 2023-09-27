@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 
 import { ApiError } from "../errors";
 import { userService } from "../services";
 import { IUser } from "../types";
-import { updateUserSchema, userSchema } from "../validations";
+import { userSchema } from "../validations";
 
 class UserController {
   public async findAll(
@@ -26,7 +27,7 @@ class UserController {
     next: NextFunction,
   ): Promise<Response<IUser> | undefined> {
     try {
-      const { error, value } = userSchema.validate(req.body);
+      const { error, value } = userSchema.create.validate(req.body);
 
       if (error) {
         throw new ApiError("Validation failed", 400);
@@ -49,7 +50,9 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-
+      if (!mongoose.isObjectIdOrHexString(id)) {
+        throw new ApiError("Not valid Id", 400);
+      }
       const user = await userService.findById(id);
 
       return res.status(200).json({ data: user });
@@ -65,7 +68,10 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-      const { value } = userSchema.validate(req.body);
+      if (!mongoose.isObjectIdOrHexString(id)) {
+        throw new ApiError("Not valid Id", 400);
+      }
+      const { value } = userSchema.create.validate(req.body);
 
       const updatedUser = await userService.updateByIdPut(id, value);
 
@@ -84,7 +90,10 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-      const { value } = updateUserSchema.validate(req.body);
+      if (!mongoose.isObjectIdOrHexString(id)) {
+        throw new ApiError("Not valid Id", 400);
+      }
+      const { value } = userSchema.updateUserSchema.validate(req.body);
 
       const updatedUser = await userService.updateByIdPatch(id, value);
 
@@ -103,7 +112,9 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-
+      if (!mongoose.isObjectIdOrHexString(id)) {
+        throw new ApiError("Not valid Id", 400);
+      }
       await userService.deleteById(id);
 
       return res.status(200).json({ message: `User id=${id} is deleted` });

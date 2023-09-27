@@ -23,7 +23,7 @@ class UserMiddleware {
         try {
             const { id } = req.params;
             const users = await models_1.User.find();
-            const { error } = validations_1.userSchema.validate(req.body);
+            const { error } = validations_1.userSchema.create.validate(req.body);
             if (error) {
                 throw new errors_1.ApiError("Validation failed", 400);
             }
@@ -41,7 +41,7 @@ class UserMiddleware {
         try {
             const { id } = req.params;
             const users = await models_1.User.find();
-            const { error } = validations_1.updateUserSchema.validate(req.body);
+            const { error } = validations_1.userSchema.updateUserSchema.validate(req.body);
             if (error) {
                 throw new errors_1.ApiError("Validation failed", 400);
             }

@@ -1,1 +1,1 @@
-export { updateUserSchema, userSchema } from "./usersValidation";
+export { userSchema } from "./usersValidation";

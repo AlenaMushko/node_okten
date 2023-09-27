@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
 import { User } from "../models";
-import { updateUserSchema, userSchema } from "../validations";
+import { userSchema } from "../validations";
 
 class UserMiddleware {
   public async findByIdByThrow(
@@ -12,6 +12,7 @@ class UserMiddleware {
   ) {
     try {
       const { id } = req.params;
+
       const users = await User.find();
       const user = users.find((user) => user.id === id);
       if (!user) {
@@ -31,8 +32,9 @@ class UserMiddleware {
   ) {
     try {
       const { id } = req.params;
+
       const users = await User.find();
-      const { error } = userSchema.validate(req.body);
+      const { error } = userSchema.create.validate(req.body);
 
       if (error) {
         throw new ApiError("Validation failed", 400);
@@ -56,7 +58,7 @@ class UserMiddleware {
     try {
       const { id } = req.params;
       const users = await User.find();
-      const { error } = updateUserSchema.validate(req.body);
+      const { error } = userSchema.updateUserSchema.validate(req.body);
 
       if (error) {
         throw new ApiError("Validation failed", 400);
