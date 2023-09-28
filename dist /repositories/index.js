@@ -14,9 +14,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commonMiddleware = exports.userMiddleware = void 0;
-var user_middleware_1 = require("./user.middleware");
-Object.defineProperty(exports, "userMiddleware", { enumerable: true, get: function () { return user_middleware_1.userMiddleware; } });
-var common_middleware_1 = require("./common.middleware");
-Object.defineProperty(exports, "commonMiddleware", { enumerable: true, get: function () { return common_middleware_1.commonMiddleware; } });
-__exportStar(require("./car.middleware"), exports);
+__exportStar(require("./user.repository"), exports);
+__exportStar(require("./car.repository"), exports);

@@ -1,1 +1,1 @@
-export { userSchema } from "./usersValidation";
+export { userSchema } from "./userValidation";

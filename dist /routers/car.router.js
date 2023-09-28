@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.carRouter = void 0;
+const express_1 = require("express");
+const controllers_1 = require("../controllers");
+const middlewares_1 = require("../middlewares");
+const router = (0, express_1.Router)();
+router.get("/", controllers_1.carController.getAll);
+router.post("/", controllers_1.carController.create);
+router.get("/:id", middlewares_1.commonMiddleware.isIdWalid, middlewares_1.carMiddleware.findByIdByThrow, controllers_1.carController.findById);
+router.put("/:id", middlewares_1.commonMiddleware.isIdWalid, middlewares_1.carMiddleware.updateByIdByThrow, controllers_1.carController.updateByIdPut);
+router.patch("/:id", middlewares_1.commonMiddleware.isIdWalid, middlewares_1.carMiddleware.updateByIdPatchByThrow, controllers_1.carController.updateByIdPatch);
+router.delete("/:id", middlewares_1.commonMiddleware.isIdWalid, middlewares_1.carMiddleware.findByIdByThrow, controllers_1.carController.deleteById);
+exports.carRouter = router;

@@ -35,6 +35,8 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 const PORT = 5005;
 app.use("/users", routers_1.userRouter);
+app.use("/cars", routers_1.carRouter);
+app.use("/auth", routers_1.authRouter);
 app.use((err, req, res, next) => {
     const status = err?.status || 500;
     return res.status(status).json({

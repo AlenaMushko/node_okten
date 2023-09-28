@@ -1,37 +1,25 @@
-import { User } from "../models";
+import { userRepository } from "../repositories";
 import { IUser } from "../types";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
-    return await User.find();
+    return await userRepository.findAll();
   }
 
   public async create(value: IUser): Promise<IUser> {
-    return (await User.create({ ...value })) as unknown as IUser;
-  }
-
-  public async findById(id: string): Promise<IUser> {
-    return (await User.findById(id)) as unknown as IUser;
+    return await userRepository.create(value);
   }
 
   public async updateByIdPut(id: string, value: IUser): Promise<IUser> {
-    return (await User.findByIdAndUpdate(
-      id,
-      { ...value },
-      { new: true },
-    )) as unknown as IUser;
+    return await userRepository.updateByIdPut(id, value);
   }
 
   public async updateByIdPatch(id: string, value: IUser): Promise<IUser> {
-    return (await User.findByIdAndUpdate(
-      id,
-      { ...value },
-      { new: true },
-    )) as unknown as IUser;
+    return await userRepository.updateByIdPatch(id, value);
   }
 
   public async deleteById(id: string): Promise<IUser> {
-    return (await User.deleteOne({ _id: id })) as unknown as IUser;
+    return await userRepository.deleteById(id);
   }
 }
 

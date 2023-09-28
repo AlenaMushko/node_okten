@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
 
 import { ApiError } from "../errors";
 import { userService } from "../services";
@@ -49,11 +48,7 @@ class UserController {
     next: NextFunction,
   ): Promise<Response<IUser> | undefined> {
     try {
-      const { id } = req.params;
-      if (!mongoose.isObjectIdOrHexString(id)) {
-        throw new ApiError("Not valid Id", 400);
-      }
-      const user = await userService.findById(id);
+      const user = res.locals.user;
 
       return res.status(200).json({ data: user });
     } catch (error) {
@@ -68,9 +63,7 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-      if (!mongoose.isObjectIdOrHexString(id)) {
-        throw new ApiError("Not valid Id", 400);
-      }
+
       const { value } = userSchema.create.validate(req.body);
 
       const updatedUser = await userService.updateByIdPut(id, value);
@@ -90,9 +83,7 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-      if (!mongoose.isObjectIdOrHexString(id)) {
-        throw new ApiError("Not valid Id", 400);
-      }
+
       const { value } = userSchema.updateUserSchema.validate(req.body);
 
       const updatedUser = await userService.updateByIdPatch(id, value);
@@ -112,9 +103,6 @@ class UserController {
   ): Promise<Response<IUser> | undefined> {
     try {
       const { id } = req.params;
-      if (!mongoose.isObjectIdOrHexString(id)) {
-        throw new ApiError("Not valid Id", 400);
-      }
       await userService.deleteById(id);
 
       return res.status(200).json({ message: `User id=${id} is deleted` });

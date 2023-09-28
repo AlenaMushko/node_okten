@@ -1,25 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
-const models_1 = require("../models");
+const repositories_1 = require("../repositories");
 class UserService {
     async findAll() {
-        return await models_1.User.find();
+        return await repositories_1.userRepository.findAll();
     }
     async create(value) {
-        return (await models_1.User.create({ ...value }));
-    }
-    async findById(id) {
-        return (await models_1.User.findById(id));
+        return await repositories_1.userRepository.create(value);
     }
     async updateByIdPut(id, value) {
-        return (await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true }));
+        return await repositories_1.userRepository.updateByIdPut(id, value);
     }
     async updateByIdPatch(id, value) {
-        return (await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true }));
+        return await repositories_1.userRepository.updateByIdPatch(id, value);
     }
     async deleteById(id) {
-        return (await models_1.User.deleteOne({ _id: id }));
+        return await repositories_1.userRepository.deleteById(id);
     }
 }
 exports.userService = new UserService();

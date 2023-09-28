@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
-import { User } from "../models";
-import { userRepository } from "../repositories";
-import { userSchema } from "../validations";
+import { Car } from "../models/Car.model";
+import { carRepository } from "../repositories";
+import { carSchema } from "../validations/carValidation";
 
-class UserMiddleware {
+class CarMiddleware {
   public async findByIdByThrow(
     req: Request,
     res: Response,
@@ -13,19 +13,20 @@ class UserMiddleware {
   ) {
     try {
       const { id } = req.params;
+      const car = await carRepository.findById(id);
 
-      const user = await userRepository.findById(id);
-      if (!user) {
-        throw new ApiError("User not found", 404);
+      if (!car) {
+        throw new ApiError("Car not found", 404);
       }
-      res.locals.user = user;
+
+      res.locals.car = car;
       next();
     } catch (e) {
       next(e);
     }
   }
 
-  public async UpdateByIdByThrow(
+  public async updateByIdByThrow(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -33,13 +34,13 @@ class UserMiddleware {
     try {
       const { id } = req.params;
 
-      const user = await User.findById(id);
+      const car = await Car.findById(id);
 
-      if (!user) {
-        throw new ApiError("User not found", 404);
+      if (!car) {
+        throw new ApiError("Car not found", 404);
       }
 
-      const { error } = userSchema.create.validate(req.body);
+      const { error } = carSchema.create.validate(req.body);
 
       if (error) {
         throw new ApiError("Validation failed", 400);
@@ -51,19 +52,19 @@ class UserMiddleware {
     }
   }
 
-  public async UpdateByIdPatchByThrow(
+  public async updateByIdPatchByThrow(
     req: Request,
     res: Response,
     next: NextFunction,
   ) {
     try {
       const { id } = req.params;
-      const user = await User.findById(id);
+      const car = await Car.findById(id);
 
-      if (!user) {
-        throw new ApiError("User not found", 404);
+      if (!car) {
+        throw new ApiError("Car not found", 404);
       }
-      const { error } = userSchema.updateUserSchema.validate(req.body);
+      const { error } = carSchema.updateCarSchema.validate(req.body);
 
       if (error) {
         throw new ApiError("Validation failed", 400);
@@ -76,4 +77,4 @@ class UserMiddleware {
   }
 }
 
-export const userMiddleware = new UserMiddleware();
+export const carMiddleware = new CarMiddleware();
