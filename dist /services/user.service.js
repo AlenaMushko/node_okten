@@ -9,14 +9,14 @@ class UserService {
     async create(value) {
         return await repositories_1.userRepository.create(value);
     }
-    async updateByIdPut(id, value) {
-        return await repositories_1.userRepository.updateByIdPut(id, value);
+    async updateByIdPut(userId, value) {
+        return await repositories_1.userRepository.updateByIdPut(userId, value);
     }
-    async updateByIdPatch(id, value) {
-        return await repositories_1.userRepository.updateByIdPatch(id, value);
+    async updateByIdPatch(userId, value) {
+        return await repositories_1.userRepository.updateByIdPatch(userId, value);
     }
-    async deleteById(id) {
-        return await repositories_1.userRepository.deleteById(id);
+    async deleteById(userId) {
+        return await repositories_1.userRepository.deleteById(userId);
     }
 }
 exports.userService = new UserService();

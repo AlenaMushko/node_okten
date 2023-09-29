@@ -1,16 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../errors";
 import { userService } from "../services";
 import { IUser } from "../types";
-import { userSchema } from "../validations";
 
 class UserController {
   public async findAll(
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser[]> | undefined> {
+  ): Promise<Response<IUser[]>> {
     try {
       const users = await userService.findAll();
 
@@ -24,15 +22,9 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | undefined> {
+  ): Promise<Response<IUser>> {
     try {
-      const { error, value } = userSchema.create.validate(req.body);
-
-      if (error) {
-        throw new ApiError("Validation failed", 400);
-      }
-
-      const newUser = await userService.create(value);
+      const newUser = await userService.create(req.body);
 
       return res
         .status(201)
@@ -46,7 +38,7 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | undefined> {
+  ): Promise<Response<IUser>> {
     try {
       const user = res.locals.user;
 
@@ -60,13 +52,11 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | undefined> {
+  ): Promise<Response<IUser>> {
     try {
-      const { id } = req.params;
+      const { userId } = req.params;
 
-      const { value } = userSchema.create.validate(req.body);
-
-      const updatedUser = await userService.updateByIdPut(id, value);
+      const updatedUser = await userService.updateByIdPut(userId, req.body);
 
       return res
         .status(200)
@@ -80,13 +70,11 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | undefined> {
+  ): Promise<Response<IUser>> {
     try {
-      const { id } = req.params;
+      const { userId } = req.params;
 
-      const { value } = userSchema.updateUserSchema.validate(req.body);
-
-      const updatedUser = await userService.updateByIdPatch(id, value);
+      const updatedUser = await userService.updateByIdPatch(userId, req.body);
 
       return res
         .status(200)
@@ -100,12 +88,12 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser> | undefined> {
+  ): Promise<Response<IUser>> {
     try {
-      const { id } = req.params;
-      await userService.deleteById(id);
+      const { userId } = req.params;
+      await userService.deleteById(userId);
 
-      return res.status(200).json({ message: `User id=${id} is deleted` });
+      return res.status(200).json({ message: `User id=${userId} is deleted` });
     } catch (e) {
       next(e);
     }

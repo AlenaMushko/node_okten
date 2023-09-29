@@ -2,37 +2,42 @@ import { Router } from "express";
 
 import { userController } from "../controllers";
 import { commonMiddleware, userMiddleware } from "../middlewares";
+import { userSchema } from "../validations";
 
 const router = Router();
 
 router.get("/", userController.findAll);
 
-router.post("/", userController.create);
+router.post(
+  "/",
+  commonMiddleware.isBodyValid(userSchema.create),
+  userController.create,
+);
 
 router.get(
-  "/:id",
-  commonMiddleware.isIdWalid,
+  "/:userId",
+  commonMiddleware.isIdValid("userId"),
   userMiddleware.findByIdByThrow,
   userController.findById,
 );
 
 router.put(
-  "/:id",
-  commonMiddleware.isIdWalid,
-  userMiddleware.UpdateByIdByThrow,
+  "/:userId",
+  commonMiddleware.isIdValid("userId"),
+  commonMiddleware.isBodyValid(userSchema.create),
   userController.updateByIdPut,
 );
 
 router.patch(
-  "/:id",
-  commonMiddleware.isIdWalid,
-  userMiddleware.UpdateByIdPatchByThrow,
+  "/:userId",
+  commonMiddleware.isIdValid("userId"),
+  commonMiddleware.isBodyValid(userSchema.updateUserSchema),
   userController.updateByIdPatch,
 );
 
 router.delete(
-  "/:id",
-  commonMiddleware.isIdWalid,
+  "/:userId",
+  commonMiddleware.isIdValid("userId"),
   userMiddleware.findByIdByThrow,
   userController.deleteById,
 );

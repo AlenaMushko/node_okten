@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.carController = void 0;
-const errors_1 = require("../errors");
 const services_1 = require("../services");
-const carValidation_1 = require("../validations/carValidation");
 class CarController {
     async getAll(req, res, next) {
         try {
@@ -12,19 +10,17 @@ class CarController {
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
     async create(req, res, next) {
         try {
-            const { error, value } = carValidation_1.carSchema.create.validate(req.body);
-            if (error) {
-                throw new errors_1.ApiError("Validation failed", 400);
-            }
-            const newCar = await services_1.carService.create(value);
+            const newCar = await services_1.carService.create(req.body);
             return res.status(201).json({ message: "Car is created", car: newCar });
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
     async findById(req, res, next) {
@@ -34,42 +30,44 @@ class CarController {
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
     async updateByIdPut(req, res, next) {
         try {
-            const { id } = req.params;
-            const { value } = carValidation_1.carSchema.create.validate(req.body);
-            const updatedCar = await services_1.carService.updateByIdPut(id, value);
+            const { carId } = req.params;
+            const updatedCar = await services_1.carService.updateByIdPut(carId, req.body);
             return res
                 .status(200)
                 .json({ messaga: "Car is updated", car: updatedCar });
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
     async updateByIdPatch(req, res, next) {
         try {
-            const { id } = req.params;
-            const { value } = carValidation_1.carSchema.create.validate(req.body);
-            const updatedCar = await services_1.carService.updateByIdPatch(id, value);
+            const { carId } = req.params;
+            const updatedCar = await services_1.carService.updateByIdPatch(carId, req.body);
             return res
                 .status(200)
                 .json({ message: "Car is updated", user: updatedCar });
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
     async deleteById(req, res, next) {
         try {
-            const { id } = req.params;
-            await services_1.carService.deleteById(id);
-            return res.status(200).json({ message: `Car id=${id} is deleted` });
+            const { carId } = req.params;
+            await services_1.carService.deleteById(carId);
+            return res.status(200).json({ message: `Car id=${carId} is deleted` });
         }
         catch (e) {
             next(e);
+            return res.status(500).json({ error: "Something went wrong" });
         }
     }
 }

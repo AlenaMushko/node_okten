@@ -10,28 +10,28 @@ class UserRepository {
     return (await User.create({ ...value })) as unknown as IUser;
   }
 
-  public async findById(id: string): Promise<IUser> {
-    return (await User.findById(id)) as unknown as IUser;
+  public async findById(userId: string): Promise<IUser> {
+    return (await User.findById(userId)) as unknown as IUser;
   }
 
-  public async updateByIdPut(id: string, value: IUser): Promise<IUser> {
+  public async updateByIdPut(userId: string, value: IUser): Promise<IUser> {
     return (await User.findByIdAndUpdate(
-      id,
+      userId,
       { ...value },
       { new: true },
     )) as unknown as IUser;
   }
 
-  public async updateByIdPatch(id: string, value: IUser): Promise<IUser> {
+  public async updateByIdPatch(userId: string, value: IUser): Promise<IUser> {
     return (await User.findByIdAndUpdate(
-      id,
+      userId,
       { ...value },
       { new: true },
     )) as unknown as IUser;
   }
 
-  public async deleteById(id: string): Promise<IUser> {
-    return (await User.deleteOne({ _id: id })) as unknown as IUser;
+  public async deleteById(userId: string): Promise<IUser> {
+    return (await User.deleteOne({ _id: userId })) as unknown as IUser;
   }
 }
 

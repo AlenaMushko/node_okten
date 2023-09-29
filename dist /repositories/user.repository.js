@@ -9,17 +9,17 @@ class UserRepository {
     async create(value) {
         return (await models_1.User.create({ ...value }));
     }
-    async findById(id) {
-        return (await models_1.User.findById(id));
+    async findById(userId) {
+        return (await models_1.User.findById(userId));
     }
-    async updateByIdPut(id, value) {
-        return (await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true }));
+    async updateByIdPut(userId, value) {
+        return (await models_1.User.findByIdAndUpdate(userId, { ...value }, { new: true }));
     }
-    async updateByIdPatch(id, value) {
-        return (await models_1.User.findByIdAndUpdate(id, { ...value }, { new: true }));
+    async updateByIdPatch(userId, value) {
+        return (await models_1.User.findByIdAndUpdate(userId, { ...value }, { new: true }));
     }
-    async deleteById(id) {
-        return (await models_1.User.deleteOne({ _id: id }));
+    async deleteById(userId) {
+        return (await models_1.User.deleteOne({ _id: userId }));
     }
 }
 exports.userRepository = new UserRepository();

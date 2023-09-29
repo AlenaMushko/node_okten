@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../errors";
 import { carService } from "../services";
 import { ICar } from "../types";
-import { carSchema } from "../validations/carValidation";
 
 class CarController {
   public async getAll(
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar[]> | undefined> {
+  ): Promise<Response<ICar[]>> {
     try {
       const cars = await carService.getAll();
+
       return res.status(200).json(cars);
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -23,16 +23,14 @@ class CarController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar> | undefined> {
+  ): Promise<Response<ICar>> {
     try {
-      const { error, value } = carSchema.create.validate(req.body);
-      if (error) {
-        throw new ApiError("Validation failed", 400);
-      }
-      const newCar = await carService.create(value);
+      const newCar = await carService.create(req.body);
+
       return res.status(201).json({ message: "Car is created", car: newCar });
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -40,13 +38,14 @@ class CarController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar> | undefined> {
+  ): Promise<Response<ICar>> {
     try {
       const car = res.locals.car;
 
       return res.status(200).json({ data: car });
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -54,18 +53,17 @@ class CarController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar> | undefined> {
+  ): Promise<Response<ICar>> {
     try {
-      const { id } = req.params;
-      const { value } = carSchema.create.validate(req.body);
-
-      const updatedCar = await carService.updateByIdPut(id, value);
+      const { carId } = req.params;
+      const updatedCar = await carService.updateByIdPut(carId, req.body);
 
       return res
         .status(200)
         .json({ messaga: "Car is updated", car: updatedCar });
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -73,18 +71,17 @@ class CarController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar> | undefined> {
+  ): Promise<Response<ICar>> {
     try {
-      const { id } = req.params;
-      const { value } = carSchema.create.validate(req.body);
-
-      const updatedCar = await carService.updateByIdPatch(id, value);
+      const { carId } = req.params;
+      const updatedCar = await carService.updateByIdPatch(carId, req.body);
 
       return res
         .status(200)
         .json({ message: "Car is updated", user: updatedCar });
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -92,13 +89,15 @@ class CarController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<ICar> | undefined> {
+  ): Promise<Response<ICar>> {
     try {
-      const { id } = req.params;
-      await carService.deleteById(id);
-      return res.status(200).json({ message: `Car id=${id} is deleted` });
+      const { carId } = req.params;
+      await carService.deleteById(carId);
+
+      return res.status(200).json({ message: `Car id=${carId} is deleted` });
     } catch (e) {
       next(e);
+      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 }
