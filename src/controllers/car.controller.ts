@@ -15,7 +15,6 @@ class CarController {
       return res.status(200).json(cars);
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -29,7 +28,6 @@ class CarController {
       return res.status(201).json({ message: "Car is created", car: newCar });
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -44,7 +42,6 @@ class CarController {
       return res.status(200).json({ data: car });
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -62,7 +59,6 @@ class CarController {
         .json({ messaga: "Car is updated", car: updatedCar });
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -80,7 +76,6 @@ class CarController {
         .json({ message: "Car is updated", user: updatedCar });
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 
@@ -96,7 +91,6 @@ class CarController {
       return res.status(200).json({ message: `Car id=${carId} is deleted` });
     } catch (e) {
       next(e);
-      return res.status(500).json({ error: "Something went wrong" });
     }
   }
 }
