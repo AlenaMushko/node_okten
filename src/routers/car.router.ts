@@ -25,6 +25,7 @@ router.put(
   "/:carId",
   commonMiddleware.isIdValid("carId"),
   commonMiddleware.isBodyValid(carSchema.create),
+  carMiddleware.findByIdByThrow,
   carController.updateByIdPut,
 );
 
@@ -32,6 +33,7 @@ router.patch(
   "/:carId",
   commonMiddleware.isIdValid("carId"),
   commonMiddleware.isBodyValid(carSchema.updateCarSchema),
+  carMiddleware.findByIdByThrow,
   carController.updateByIdPatch,
 );
 

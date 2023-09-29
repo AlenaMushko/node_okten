@@ -25,6 +25,7 @@ router.put(
   "/:userId",
   commonMiddleware.isIdValid("userId"),
   commonMiddleware.isBodyValid(userSchema.create),
+  userMiddleware.findByIdByThrow,
   userController.updateByIdPut,
 );
 
@@ -32,6 +33,7 @@ router.patch(
   "/:userId",
   commonMiddleware.isIdValid("userId"),
   commonMiddleware.isBodyValid(userSchema.updateUserSchema),
+  userMiddleware.findByIdByThrow,
   userController.updateByIdPatch,
 );
 
