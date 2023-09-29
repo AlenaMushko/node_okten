@@ -26,7 +26,6 @@ class CarController {
   ): Promise<Response<ICar>> {
     try {
       const newCar = await carService.create(req.body);
-
       return res.status(201).json({ message: "Car is created", car: newCar });
     } catch (e) {
       next(e);
