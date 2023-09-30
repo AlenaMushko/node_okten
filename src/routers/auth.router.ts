@@ -1,11 +1,23 @@
 import { Router } from "express";
 
 import { authController } from "../controllers";
+import { commonMiddleware } from "../middlewares";
+import { userSchema } from "../validations";
 
 const router = Router();
 
-router.get("/register", authController.register);
+//singnup
+router.post(
+  "/register",
+  commonMiddleware.isBodyValid(userSchema.create),
+  authController.register,
+);
 
-router.get("/login", authController.login);
+//signin
+router.post(
+  "/login",
+  commonMiddleware.isBodyValid(userSchema.create),
+  authController.login,
+);
 
 export const authRouter = router;
