@@ -18,13 +18,29 @@ class CarController {
     }
   }
 
+  public async getAllOwner(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<ICar[]>> {
+    try {
+      const { _id } = res.locals.user;
+      const cars = await carService.getAllOwner(_id);
+
+      return res.status(200).json(cars);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async create(
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response<ICar>> {
     try {
-      const newCar = await carService.create(req.body);
+      const { _id: ownerId } = res.locals.ownerUser;
+      const newCar = await carService.create({ ...req.body, ownerId });
       return res.status(201).json({ message: "Car is created", car: newCar });
     } catch (e) {
       next(e);

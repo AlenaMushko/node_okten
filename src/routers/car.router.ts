@@ -1,21 +1,29 @@
 import { Router } from "express";
 
 import { carController } from "../controllers";
-import { carMiddleware, commonMiddleware } from "../middlewares";
+import {
+  authenticateMiddleware,
+  carMiddleware,
+  commonMiddleware,
+} from "../middlewares";
 import { carSchema } from "../validations/carValidation";
 
 const router = Router();
 
-router.get("/", carController.getAll);
+router.get("/", authenticateMiddleware.isLogin, carController.getAll);
+
+router.get("/owner", authenticateMiddleware.isLogin, carController.getAllOwner);
 
 router.post(
   "/",
+  authenticateMiddleware.isLogin,
   commonMiddleware.isBodyValid(carSchema.create),
   carController.create,
 );
 
 router.get(
   "/:carId",
+  authenticateMiddleware.isLogin,
   commonMiddleware.isIdValid("carId"),
   carMiddleware.findByIdByThrow,
   carController.findById,
@@ -23,6 +31,7 @@ router.get(
 
 router.put(
   "/:carId",
+  authenticateMiddleware.isLogin,
   commonMiddleware.isIdValid("carId"),
   commonMiddleware.isBodyValid(carSchema.create),
   carMiddleware.findByIdByThrow,
@@ -31,6 +40,7 @@ router.put(
 
 router.patch(
   "/:carId",
+  authenticateMiddleware.isLogin,
   commonMiddleware.isIdValid("carId"),
   commonMiddleware.isBodyValid(carSchema.updateCarSchema),
   carMiddleware.findByIdByThrow,
@@ -39,6 +49,7 @@ router.patch(
 
 router.delete(
   "/:carId",
+  authenticateMiddleware.isLogin,
   commonMiddleware.isIdValid("carId"),
   carMiddleware.findByIdByThrow,
   carController.deleteById,

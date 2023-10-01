@@ -31,13 +31,17 @@ export class userSchema {
       "{{#label}} must be 3 to 20 characters, contain at least one lowercase letter, one uppercase letter, and one number.",
     "any.required": "{{#label}} is required!!",
   });
+  static accessToken = Joi.string();
+  static refreshToken = Joi.string();
 
   static create = Joi.object({
-    name: this.userName,
+    name: this.userName.required(),
     age: this.age,
     gender: this.gender,
     email: this.email.required(),
     password: this.password.required(),
+    accessToken: this.accessToken,
+    refreshToken: this.refreshToken,
   });
 
   static updateUserSchema = Joi.object({
@@ -46,5 +50,22 @@ export class userSchema {
     gender: this.gender,
     email: this.email,
     password: this.password,
-  }).or("name", "age", "gender", "email", "password");
+    accessToken: this.accessToken,
+    refreshToken: this.refreshToken,
+  }).or(
+    "name",
+    "age",
+    "gender",
+    "email",
+    "password",
+    "accessToken",
+    "refreshToken",
+  );
+
+  static login = Joi.object({
+    email: this.email.required(),
+    password: this.password.required(),
+    accessToken: this.accessToken,
+    refreshToken: this.refreshToken,
+  });
 }

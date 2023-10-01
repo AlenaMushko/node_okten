@@ -28,6 +28,7 @@ class CommonMiddleware {
           const errorMessage = error.message;
           throw new ApiError(errorMessage, 400);
         }
+
         req.body = value;
         next();
       } catch (e) {

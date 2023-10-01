@@ -1,7 +1,6 @@
-import { ApiError } from "../errors";
-import { User } from "../models";
+// import { ApiError } from "../errors";
 import { authRepository } from "../repositories";
-import { ICredentials, IJwt, IUser } from "../types";
+import { ICredentials, IJwt, ITokenPayload, IUser } from "../types";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -11,24 +10,29 @@ class AuthService {
     // хешуємо пароль npm i bcryptjs
     const hashadPassword = await passwordService.hash(password);
 
-    await User.create({ ...body, password: hashadPassword });
+    await authRepository.register(body, hashadPassword);
   }
 
   public async login(body: ICredentials): Promise<IJwt> {
-    const { password, email } = body;
+    const { email } = body;
     const user = await authRepository.findOne(email);
-    if (!user) {
-      throw new ApiError("Invalid email or password", 401);
-    }
-
-    const isMatched = await passwordService.compare(password, user.password);
-    if (!isMatched) {
-      throw new ApiError("Invalid email or password", 401);
-    }
 
     const tokensPair = tokenService.generateTokenPairs({ id: user._id });
+    await authRepository.login(
+      user,
+      tokensPair.accessToken,
+      tokensPair.refreshToken,
+    );
 
     return tokensPair;
+  }
+
+  public async logout(id: ITokenPayload): Promise<void> {
+    await authRepository.logout(id);
+  }
+
+  public async updateUser(userId: string, body: IUser): Promise<IUser> {
+    return await authRepository.updateUser(userId, body);
   }
 }
 

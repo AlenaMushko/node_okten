@@ -19,6 +19,12 @@ const carSchema = new Schema(
       min: [1, "Price min 1"],
       max: [1000000, "Price max 1000000"],
     },
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      // //з якої колекції беремо юзера
+      ref: "user",
+    },
   },
   {
     timestamps: true,

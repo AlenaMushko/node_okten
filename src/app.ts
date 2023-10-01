@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import * as mongoose from "mongoose";
 
 import { configs } from "./config";
@@ -14,7 +14,7 @@ app.use("/users", userRouter);
 app.use("/cars", carRouter);
 app.use("/auth", authRouter);
 
-app.use((err: any, req: Request, res: Response) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const status = err?.status || 500;
   return res.status(status).json({
     message: err.message,

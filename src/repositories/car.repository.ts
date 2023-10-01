@@ -6,6 +6,14 @@ class CarRepository {
     return await Car.find();
   }
 
+  public async getAllOwner(id: object): Promise<ICar[]> {
+    return (await Car.find({ ownerId: id }).populate(
+      //коли отримує машинки юзера, і хочемо щне дані того юзера мати відразу
+      "ownerId", //до якого поля доптсуємо
+      "name email", //які поля включити із user
+    )) as unknown as ICar[];
+  }
+
   public async create(value: ICar): Promise<ICar> {
     return (await Car.create({ ...value })) as unknown as ICar;
   }

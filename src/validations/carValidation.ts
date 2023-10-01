@@ -21,16 +21,19 @@ export class carSchema {
     "string.min": "{{#label}} must be at least {{#limit}} $",
     "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
   });
+  static ownerId = Joi.string();
 
   static create = Joi.object({
     model: this.model.required(),
     year: this.year.required(),
     price: this.price.required(),
+    ownerId: this.ownerId,
   });
 
   static updateCarSchema = Joi.object({
     model: this.model,
     year: this.year,
     price: this.price,
-  }).or("model", "year", "price");
+    ownerId: this.ownerId,
+  }).or("model", "year", "price", "ownerId");
 }

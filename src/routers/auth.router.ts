@@ -1,23 +1,41 @@
 import { Router } from "express";
 
 import { authController } from "../controllers";
-import { commonMiddleware } from "../middlewares";
+import {
+  authenticateMiddleware,
+  authMiddleware,
+  commonMiddleware,
+} from "../middlewares";
 import { userSchema } from "../validations";
 
 const router = Router();
 
-//singnup
 router.post(
   "/register",
   commonMiddleware.isBodyValid(userSchema.create),
+  authMiddleware.uniqueEmail,
   authController.register,
 );
 
-//signin
 router.post(
   "/login",
-  commonMiddleware.isBodyValid(userSchema.create),
+  commonMiddleware.isBodyValid(userSchema.login),
+  authMiddleware.loginError,
   authController.login,
+);
+
+router.post("/logout", authenticateMiddleware.isLogin, authController.logout);
+
+router.get(
+  "/current",
+  authenticateMiddleware.isLogin,
+  authController.currentUser,
+);
+
+router.patch(
+  "/update",
+  authenticateMiddleware.isLogin,
+  authController.updateUser,
 );
 
 export const authRouter = router;

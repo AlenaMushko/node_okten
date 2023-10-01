@@ -32,6 +32,14 @@ const userSchema = new Schema(
       type: String,
       enum: EGenders,
     },
+    accessToken: {
+      type: String,
+      default: "",
+    },
+    refreshToken: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

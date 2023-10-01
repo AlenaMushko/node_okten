@@ -6,6 +6,10 @@ class CarService {
     return await carRepository.getAll();
   }
 
+  public async getAllOwner(id: object): Promise<ICar[]> {
+    return await carRepository.getAllOwner(id);
+  }
+
   public async create(value: ICar): Promise<ICar> {
     return await carRepository.create(value);
   }
