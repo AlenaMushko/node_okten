@@ -28,10 +28,11 @@ class AuthService {
   }
 
   public async logout(id: ITokenPayload): Promise<void> {
+    console.log(id, typeof id);
     await authRepository.logout(id);
   }
 
-  public async updateUser(userId: string, body: IUser): Promise<IUser> {
+  public async updateUser(userId: ITokenPayload, body: IUser): Promise<IUser> {
     return await authRepository.updateUser(userId, body);
   }
 }

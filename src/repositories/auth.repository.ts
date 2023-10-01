@@ -22,14 +22,14 @@ class AuthRepository {
       refreshToken,
     })) as unknown as IUser;
   }
-  public async logout(_id: ITokenPayload): Promise<IUser> {
-    return (await User.findByIdAndUpdate(_id, {
+  public async logout(_id: ITokenPayload): Promise<void> {
+    await User.findByIdAndUpdate(_id, {
       accessToken: "",
       refreshToken: "",
-    })) as unknown as IUser;
+    });
   }
 
-  public async updateUser(id: string, body: IUser): Promise<IUser> {
+  public async updateUser(id: ITokenPayload, body: IUser): Promise<IUser> {
     return (await User.findByIdAndUpdate(
       id,
       { ...body },
