@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ApiError } from "../errors";
 import { authService } from "../services";
 import { IJwt, IMessage, IUser } from "../types";
 
@@ -54,6 +55,23 @@ class AuthController {
     }
   }
 
+  public async refreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IJwt>> {
+    const refreshToken = res.locals.user?.refreshToken;
+    if (!refreshToken) {
+      throw new ApiError("Access Denied. No refresh token provided", 401);
+    }
+
+    try {
+      const tokenPair = await authService.refreshToken(refreshToken);
+      return res.status(200).json({ ...tokenPair });
+    } catch (e) {
+      next(e);
+    }
+  }
   public async updateUser(
     req: Request,
     res: Response,

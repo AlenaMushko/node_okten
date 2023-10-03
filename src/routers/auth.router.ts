@@ -26,6 +26,8 @@ router.post(
 
 router.post("/logout", authenticateMiddleware.isLogin, authController.logout);
 
+router.post("/refreshToken", authController.refreshToken);
+
 router.get(
   "/current",
   authenticateMiddleware.isLogin,

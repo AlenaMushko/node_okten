@@ -3,13 +3,18 @@ import * as jwt from "jsonwebtoken";
 import { configs } from "../config";
 import { IJwt, ITokenPayload } from "../types";
 
-const tokenSecret = configs.TOKEN_SECRET;
+const accessTokenSecret = configs.ACCESS_TOKEN_SECRET;
+const refreshTokenSecret = configs.REFRESH_TOKEN_SECRET;
 
 class TokenService {
   public generateTokenPairs(payload: ITokenPayload): IJwt {
-    const accessToken = jwt.sign(payload, tokenSecret, { expiresIn: "15m" });
+    const accessToken = jwt.sign(payload, accessTokenSecret, {
+      expiresIn: "15m",
+    });
 
-    const refreshToken = jwt.sign(payload, tokenSecret, { expiresIn: "30d" });
+    const refreshToken = jwt.sign(payload, refreshTokenSecret, {
+      expiresIn: "30d",
+    });
 
     return { accessToken, refreshToken };
   }

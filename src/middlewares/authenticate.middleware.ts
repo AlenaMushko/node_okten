@@ -6,7 +6,8 @@ import { configs } from "../config";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 
-const tokenSecret = configs.TOKEN_SECRET;
+const tokenSecret = configs.ACCESS_TOKEN_SECRET;
+
 class AuthenticateMiddleware {
   public async isLogin(req: Request, res: Response, next: NextFunction) {
     try {
