@@ -5,6 +5,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { configs } from "../config";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
+import { tokenRepository } from "../repositories/token.repository";
 
 const tokenSecret = configs.ACCESS_TOKEN_SECRET;
 
@@ -21,22 +22,19 @@ class AuthenticateMiddleware {
         throw new ApiError("Not authorized", 401);
       }
 
-      const { id } = jwt.verify(token, tokenSecret) as JwtPayload;
+      const { userId } = jwt.verify(token, tokenSecret) as JwtPayload;
 
-      const user = await userRepository.findById(id);
+      const user = await userRepository.findById(userId);
+      const tokenModel = await tokenRepository.getByID(userId);
 
       //розлогінити юзера, якщо немає токенів
-      if (
-        !user ||
-        !user.accessToken ||
-        !user.refreshToken ||
-        user.accessToken !== token
-      ) {
+      if (!user || !tokenModel) {
         throw new ApiError("Token not valid", 401);
       }
 
       // щоб знати хто робить запит і можна додати при створенні машинок, щоб потім брати всі машинки що додав певний юзер
       res.locals.user = user;
+      res.locals.tokenModel = tokenModel;
 
       next();
     } catch (e) {

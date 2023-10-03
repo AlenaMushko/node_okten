@@ -8,6 +8,4 @@ export interface IUser extends Document {
   email: string;
   password: string;
   gender?: EGenders;
-  refreshToken: string;
-  accessToken: string;
 }

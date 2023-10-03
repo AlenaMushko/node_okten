@@ -1,8 +1,9 @@
-import * as jwt from "jsonwebtoken";
-import { JwtPayload } from "jsonwebtoken";
-
-import { configs } from "../config";
-import { authRepository, userRepository } from "../repositories";
+// import * as jwt from "jsonwebtoken";
+// import { JwtPayload } from "jsonwebtoken";
+//
+// import { configs } from "../config";
+import { authRepository } from "../repositories";
+import { tokenRepository } from "../repositories/token.repository";
 import { ICredentials, IJwt, ITokenPayload, IUser } from "../types";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
@@ -20,32 +21,11 @@ class AuthService {
     const { email } = body;
     const user = await authRepository.findOne(email);
 
-    const tokensPair = tokenService.generateTokenPairs({ id: user._id });
-    await authRepository.login(
-      user,
-      tokensPair.accessToken,
-      tokensPair.refreshToken,
-    );
-
-    return tokensPair;
-  }
-
-  public async logout(id: ITokenPayload): Promise<void> {
-    await authRepository.logout(id);
-  }
-
-  public async refreshToken(refreshToken: string): Promise<IJwt> {
-    const tokenSecret = configs.REFRESH_TOKEN_SECRET;
-    const { id } = jwt.verify(refreshToken, tokenSecret) as JwtPayload;
-
-    const user = await userRepository.findById(id);
-
-    const tokensPair = tokenService.generateTokenPairs({ id: user._id });
-    await authRepository.login(
-      user,
-      tokensPair.accessToken,
-      tokensPair.refreshToken,
-    );
+    const tokensPair = tokenService.generateTokenPairs({
+      userId: user._id,
+      name: user.name,
+    });
+    await tokenRepository.createToken({ ...tokensPair, _userId: user._id });
 
     return tokensPair;
   }

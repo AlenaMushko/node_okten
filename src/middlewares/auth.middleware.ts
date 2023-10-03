@@ -33,6 +33,7 @@ class AuthMiddleware {
       if (!isMatched) {
         throw new ApiError("Invalid email or password", 401);
       }
+
       next();
     } catch (e) {
       next(e);

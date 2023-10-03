@@ -24,8 +24,6 @@ router.post(
   authController.login,
 );
 
-router.post("/logout", authenticateMiddleware.isLogin, authController.logout);
-
 router.post("/refreshToken", authController.refreshToken);
 
 router.get(
@@ -39,5 +37,7 @@ router.patch(
   authenticateMiddleware.isLogin,
   authController.updateUser,
 );
+
+router.delete("/logout", authenticateMiddleware.isLogin, authController.logout);
 
 export const authRouter = router;
