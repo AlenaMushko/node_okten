@@ -41,6 +41,38 @@ class AuthenticateMiddleware {
       next(e);
     }
   }
+
+  public async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { authorization } = req.headers;
+      if (!authorization) {
+        throw new ApiError("Authorization header missing", 401);
+      }
+
+      const [bearer, token] = authorization.split(" ");
+      if (!bearer || !token) {
+        throw new ApiError("Not authorized", 401);
+      }
+      console.log("1");
+      // const tokenObj = await Token.findOne({ accessToken: token });
+
+      const tokenObj = await tokenRepository.findOne(token);
+      if (!tokenObj) {
+        throw new ApiError("Access Denied. No refresh token provided", 401);
+      }
+      console.log("12");
+      const user = userRepository.findOne(tokenObj);
+      if (!user) {
+        throw new ApiError("Token not valid", 401);
+      }
+
+      res.locals.user = user;
+      res.locals.tokenObj = tokenObj;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const authenticateMiddleware = new AuthenticateMiddleware();

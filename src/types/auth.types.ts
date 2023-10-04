@@ -26,5 +26,6 @@ export interface IJwt {
 }
 
 export interface IToken extends IJwt, Document {
+  _id: ObjectId;
   _userId: ObjectId | IUser;
 }

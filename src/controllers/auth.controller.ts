@@ -1,9 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../errors";
-import { User } from "../models";
-import { Token } from "../models/Token.modal";
-import { tokenRepository } from "../repositories/token.repository";
 import { authService, tokenService } from "../services";
 import { IJwt, IMessage, IUser } from "../types";
 
@@ -49,31 +45,11 @@ class AuthController {
     res: Response,
     next: NextFunction,
   ): Promise<Response<IJwt>> {
-    const { authorization } = req.headers;
-    if (!authorization) {
-      throw new ApiError("Authorization header missing", 401);
-    }
-    const [bearer, token] = authorization.split(" ");
-    if (!bearer || !token) {
-      throw new ApiError("Not authorized", 401);
-    }
     try {
-      const tokenObj = await Token.findOne({ accessToken: token });
-      if (!tokenObj) {
-        throw new ApiError("Access Denied. No refresh token provided", 401);
-      }
-      const user = (await User.findOne({
-        _id: tokenObj._userId,
-      })) as unknown as IUser;
+      const user = res.locals.user;
+      const tokenObj = res.locals.tokenObj;
 
-      const tokensPair = tokenService.generateTokenPairs({
-        userId: user._id,
-        name: user.name,
-      });
-      await Token.deleteOne({
-        _id: tokenObj._id,
-      });
-      await tokenRepository.createToken({ ...tokensPair, _userId: user._id });
+      const tokensPair = await tokenService.refreshToken(user, tokenObj._id);
 
       return res.status(200).json({ ...tokensPair });
     } catch (e) {
@@ -112,3 +88,40 @@ class AuthController {
 }
 
 export const authController = new AuthController();
+
+// public async refreshToken(
+//     req: Request,
+//     res: Response,
+//     next: NextFunction,
+// ): Promise<Response<IJwt>> {
+//   const { authorization } = req.headers;
+//   if (!authorization) {
+//   throw new ApiError("Authorization header missing", 401);
+// }
+// const [bearer, token] = authorization.split(" ");
+// if (!bearer || !token) {
+//   throw new ApiError("Not authorized", 401);
+// }
+// try {
+//   const tokenObj = await Token.findOne({ accessToken: token });
+//   if (!tokenObj) {
+//     throw new ApiError("Access Denied. No refresh token provided", 401);
+//   }
+//   const user = (await User.findOne({
+//     _id: tokenObj._userId,
+//   })) as unknown as IUser;
+//
+//   const tokensPair = tokenService.generateTokenPairs({
+//     userId: user._id,
+//     name: user.name,
+//   });
+//   await Token.deleteOne({
+//     _id: tokenObj._id,
+//   });
+//   await tokenRepository.createToken({ ...tokensPair, _userId: user._id });
+//
+//   return res.status(200).json({ ...tokensPair });
+// } catch (e) {
+//   next(e);
+// }
+// }

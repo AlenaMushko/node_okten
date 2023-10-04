@@ -1,5 +1,5 @@
 import { User } from "../models";
-import { IUser } from "../types";
+import { IToken, IUser } from "../types";
 
 class UserRepository {
   public async findAll(): Promise<IUser[]> {
@@ -14,6 +14,11 @@ class UserRepository {
     return (await User.findById(userId)) as unknown as IUser;
   }
 
+  public async findOne(tokenObj: IToken): Promise<IUser> {
+    return (await User.findOne({
+      _id: tokenObj._userId,
+    })) as unknown as IUser;
+  }
   public async updateByIdPut(userId: string, value: IUser): Promise<IUser> {
     return (await User.findByIdAndUpdate(
       userId,

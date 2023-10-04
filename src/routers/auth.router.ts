@@ -24,7 +24,11 @@ router.post(
   authController.login,
 );
 
-router.post("/refreshToken", authController.refreshToken);
+router.post(
+  "/refreshToken",
+  authenticateMiddleware.refreshToken,
+  authController.refreshToken,
+);
 
 router.get(
   "/current",
