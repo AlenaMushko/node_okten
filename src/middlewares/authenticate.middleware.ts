@@ -53,15 +53,13 @@ class AuthenticateMiddleware {
       if (!bearer || !token) {
         throw new ApiError("Not authorized", 401);
       }
-      console.log("1");
-      // const tokenObj = await Token.findOne({ accessToken: token });
 
       const tokenObj = await tokenRepository.findOne(token);
       if (!tokenObj) {
         throw new ApiError("Access Denied. No refresh token provided", 401);
       }
-      console.log("12");
-      const user = userRepository.findOne(tokenObj);
+
+      const user = await userRepository.findOne(tokenObj);
       if (!user) {
         throw new ApiError("Token not valid", 401);
       }

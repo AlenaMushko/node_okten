@@ -15,10 +15,7 @@ class TokenRepository {
   }
 
   public async findOne(token: string): Promise<IToken> {
-    console.log(token);
-    const tokenObj = await Token.findOne({ accessToken: token });
-    console.log(tokenObj);
-    return tokenObj;
+    return await Token.findOne({ accessToken: token });
   }
 }
 
