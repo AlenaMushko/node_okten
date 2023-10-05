@@ -33,6 +33,9 @@ class AuthService {
     }
 
     await authRepository.verifyUser(user);
+    await emailService.welcomeEmail(user.email, EEmailAction.WELCOME, {
+      name: user.name + ", " || " ",
+    });
   }
   public async login(body: ICredentials): Promise<IJwt> {
     const { email } = body;
