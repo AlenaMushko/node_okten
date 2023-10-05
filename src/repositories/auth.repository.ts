@@ -29,6 +29,17 @@ class AuthRepository {
       { new: true },
     )) as unknown as IUser;
   }
+
+  public async forgotPassword(
+    body: IUser,
+    newPassword: string,
+  ): Promise<IUser> {
+    return (await User.findByIdAndUpdate(
+      body.email,
+      { ...body, password: newPassword },
+      { new: true },
+    )) as unknown as IUser;
+  }
 }
 
 export const authRepository = new AuthRepository();

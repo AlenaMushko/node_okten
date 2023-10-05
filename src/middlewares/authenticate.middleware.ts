@@ -59,12 +59,6 @@ class AuthenticateMiddleware {
         throw new ApiError("Access Denied. No refresh token provided", 401);
       }
 
-      const user = await userRepository.findOne(tokenObj);
-      if (!user) {
-        throw new ApiError("Token not valid", 401);
-      }
-
-      res.locals.user = user;
       res.locals.tokenObj = tokenObj;
       next();
     } catch (e) {

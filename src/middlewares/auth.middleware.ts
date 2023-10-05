@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
-import { authRepository } from "../repositories";
+import { authRepository, userRepository } from "../repositories";
 import { passwordService } from "../services";
 
 class AuthMiddleware {
@@ -32,6 +32,37 @@ class AuthMiddleware {
       );
       if (!isMatched) {
         throw new ApiError("Invalid email or password", 401);
+      }
+
+      res.locals.user = user;
+
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await userRepository.findOne(res.locals.tokenObj);
+      if (!user) {
+        throw new ApiError("Token not valid", 401);
+      }
+
+      res.locals.user = user;
+
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async verifyAganUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await authRepository.findOne(req.body.email);
+
+      if (!user) {
+        throw new ApiError("You are not registered", 404);
       }
 
       res.locals.user = user;

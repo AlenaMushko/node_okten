@@ -53,6 +53,22 @@ class AuthService {
   public async updateUser(userId: ITokenPayload, body: IUser): Promise<IUser> {
     return await authRepository.updateUser(userId, body);
   }
+
+  public async forgotPassword(
+    body: IUser,
+    newPassword: string,
+  ): Promise<IUser> {
+    return await authRepository.forgotPassword(body, newPassword);
+  }
+
+  public async verifyAganUser(user: IUser): Promise<void> {
+    if (!user.verify) {
+      await emailService.sendEmail(user.email, EEmailAction.REGISTER, {
+        name: user.name + ", " || " ",
+        actionToken: user.actionToken,
+      });
+    }
+  }
 }
 
 export const authService = new AuthService();

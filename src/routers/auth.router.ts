@@ -19,6 +19,16 @@ router.post(
 
 router.get("/activated/:actionToken", authController.verifyUser);
 
+//якщо верифікаційний лист загубився, відправити ще один
+router.post(
+  "/activated",
+  commonMiddleware.isBodyValid(userSchema.activated),
+  authMiddleware.verifyAganUser,
+  authController.verifyAganUser,
+);
+
+router.patch("/forgotPassword", authController.forgotPassword);
+
 router.post(
   "/login",
   commonMiddleware.isBodyValid(userSchema.login),
@@ -30,6 +40,7 @@ router.post(
 router.post(
   "/refreshToken",
   authenticateMiddleware.refreshToken,
+  authMiddleware.refreshToken,
   authController.refreshToken,
 );
 
