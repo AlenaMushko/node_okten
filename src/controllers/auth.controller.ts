@@ -10,7 +10,8 @@ class AuthController {
     next: NextFunction,
   ): Promise<Response<IMessage>> {
     try {
-      await authService.register(req.body);
+      const actionToken = await tokenService.generateVerifyToken(req.body);
+      await authService.register(req.body, actionToken);
 
       return res.status(201).json("User created");
     } catch (e) {
@@ -23,7 +24,7 @@ class AuthController {
     next: NextFunction,
   ): Promise<Response<IJwt>> {
     try {
-      const tokenPair = await authService.login(req.body);
+      const tokenPair = await authService.login(res.locals.user);
       return res.status(200).json({ ...tokenPair });
     } catch (e) {
       next(e);
@@ -40,6 +41,20 @@ class AuthController {
     }
   }
 
+  public async verifyUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const { actionToken } = req.params;
+      await authService.verifyUser(actionToken);
+
+      return res.status(200).json("Verification successful");
+    } catch (e) {
+      next(e);
+    }
+  }
   public async refreshToken(
     req: Request,
     res: Response,

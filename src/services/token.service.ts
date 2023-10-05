@@ -20,6 +20,11 @@ class TokenService {
     return { accessToken, refreshToken };
   }
 
+  public generateVerifyToken(email: string): string {
+    return jwt.sign(email, accessTokenSecret, {
+      expiresIn: "1h",
+    });
+  }
   public async logout(id: ITokenPayload): Promise<void> {
     await tokenRepository.logout(id);
   }

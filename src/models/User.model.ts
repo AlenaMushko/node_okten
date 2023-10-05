@@ -32,6 +32,14 @@ const userSchema = new Schema(
       type: String,
       enum: EGenders,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    actionToken: {
+      type: String,
+      required: [true, "Action token is required"],
+    },
   },
   {
     timestamps: true,

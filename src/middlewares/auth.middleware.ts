@@ -34,6 +34,8 @@ class AuthMiddleware {
         throw new ApiError("Invalid email or password", 401);
       }
 
+      res.locals.user = user;
+
       next();
     } catch (e) {
       next(e);

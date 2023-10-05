@@ -17,10 +17,13 @@ router.post(
   authController.register,
 );
 
+router.get("/activated/:actionToken", authController.verifyUser);
+
 router.post(
   "/login",
   commonMiddleware.isBodyValid(userSchema.login),
   authMiddleware.loginError,
+  authenticateMiddleware.isUserVerify,
   authController.login,
 );
 

@@ -71,6 +71,19 @@ class AuthenticateMiddleware {
       next(e);
     }
   }
+
+  public async isUserVerify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = res.locals.user;
+      if (!user.verify) {
+        throw new ApiError("User not verified", 401);
+      }
+
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const authenticateMiddleware = new AuthenticateMiddleware();
