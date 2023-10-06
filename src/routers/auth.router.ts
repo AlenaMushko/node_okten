@@ -17,14 +17,19 @@ router.post(
   authController.register,
 );
 
-router.get("/activated/:actionToken", authController.verifyUser);
+router.get(
+  "/activated/:actionToken",
+  authMiddleware.isActivated,
+  authMiddleware.activatedUser,
+  authController.activatedUser,
+);
 
 //якщо верифікаційний лист загубився, відправити ще один
 router.post(
   "/activated",
   commonMiddleware.isBodyValid(userSchema.activated),
-  authMiddleware.verifyAganUser,
-  authController.verifyAganUser,
+  authMiddleware.activatedAgainUser,
+  authController.activatedAgainUser,
 );
 
 router.patch("/forgotPassword", authController.forgotPassword);

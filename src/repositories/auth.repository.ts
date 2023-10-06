@@ -1,23 +1,36 @@
-import { User } from "../models";
-import { ITokenPayload, IUser } from "../types";
+import { Activated, User } from "../models";
+import { IActivated, IActivatedModel, ITokenPayload, IUser } from "../types";
 
 class AuthRepository {
-  public async register(
-    body: IUser,
-    hashadPassword: string,
-    actionToken: string,
-  ): Promise<IUser> {
+  public async register(body: IUser, hashadPassword: string): Promise<IUser> {
     return (await User.create({
       ...body,
       password: hashadPassword,
-      actionToken,
     })) as unknown as IUser;
   }
 
+  public async actionToken(
+    body: IUser,
+    actionToken: string,
+  ): Promise<IActivated> {
+    return (await Activated.create({
+      accessToken: actionToken,
+      userEmail: body.email,
+    })) as unknown as IActivated;
+  }
   public async verifyUser(user: IUser): Promise<void> {
     await User.findByIdAndUpdate(user._id, { verify: true, actionToken: "" });
   }
 
+  public async findActivated(accessToken: string): Promise<IActivatedModel> {
+    return (await Activated.findOne({
+      accessToken,
+    })) as unknown as IActivatedModel;
+  }
+
+  public async deleteActivated(activated: IActivatedModel): Promise<void> {
+    await Activated.deleteOne({ _id: activated._id });
+  }
   public async findOne(email: string): Promise<IUser> {
     return (await User.findOne({ email })) as unknown as IUser;
   }

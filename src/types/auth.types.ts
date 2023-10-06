@@ -29,3 +29,13 @@ export interface IToken extends IJwt, Document {
   _id: ObjectId;
   _userId?: ObjectId | IUser;
 }
+
+export interface IActivated {
+  accessToken: string;
+}
+
+export interface IActivatedModel extends Document {
+  _id: ObjectId;
+  accessToken: string;
+  userEmail: string;
+}

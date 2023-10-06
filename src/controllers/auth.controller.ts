@@ -41,14 +41,15 @@ class AuthController {
     }
   }
 
-  public async verifyUser(
+  public async activatedUser(
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response<IMessage>> {
     try {
-      const { actionToken } = req.params;
-      await authService.verifyUser(actionToken);
+      const activated = res.locals.activated;
+      const user = res.locals.user;
+      await authService.activatedUser(activated, user);
 
       return res.status(200).json("Verification successful");
     } catch (e) {
@@ -56,20 +57,21 @@ class AuthController {
     }
   }
 
-  public async verifyAganUser(
+  public async activatedAgainUser(
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response<IMessage>> {
     try {
       const user = res.locals.user;
-      await authService.verifyAganUser(user);
+      await authService.activatedAgainUser(user);
 
-      return res.status(200).json("Send verification letter agan successful");
+      return res.status(200).json("Send verification letter again successful");
     } catch (e) {
       next(e);
     }
   }
+
   public async refreshToken(
     req: Request,
     res: Response,

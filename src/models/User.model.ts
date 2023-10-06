@@ -36,10 +36,6 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    actionToken: {
-      type: String,
-      required: [true, "Action token is required"],
-    },
   },
   {
     timestamps: true,

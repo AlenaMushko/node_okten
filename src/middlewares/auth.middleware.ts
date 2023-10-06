@@ -57,12 +57,49 @@ class AuthMiddleware {
     }
   }
 
-  public async verifyAganUser(req: Request, res: Response, next: NextFunction) {
+  public async isActivated(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { actionToken } = req.params;
+
+      const activated = await authRepository.findActivated(actionToken);
+      if (!activated || activated.accessToken !== actionToken) {
+        throw new ApiError("Invalid or expired token", 401);
+      }
+
+      res.locals.activated = activated;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async activatedUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await authRepository.findOne(res.locals.activated.userEmail);
+      if (!user) {
+        throw new ApiError("Invalid or expired token", 401);
+      }
+
+      res.locals.user = user;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async activatedAgainUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
       const user = await authRepository.findOne(req.body.email);
 
       if (!user) {
-        throw new ApiError("You are not registered", 404);
+        throw new ApiError("You are not registered", 401);
+      }
+
+      if (user.verify) {
+        throw new ApiError("You are already verify", 401);
       }
 
       res.locals.user = user;

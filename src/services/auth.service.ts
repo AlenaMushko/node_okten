@@ -1,9 +1,14 @@
 import { EEmailAction } from "../enums/email.action.enum";
 import { ApiError } from "../errors";
-import { User } from "../models";
 import { authRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
-import { ICredentials, IJwt, ITokenPayload, IUser } from "../types";
+import {
+  IActivatedModel,
+  ICredentials,
+  IJwt,
+  ITokenPayload,
+  IUser,
+} from "../types";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
@@ -15,7 +20,10 @@ class AuthService {
       // хешуємо пароль npm i bcryptjs
       const hashadPassword = await passwordService.hash(password);
 
-      await authRepository.register(body, hashadPassword, actionToken);
+      Promise.all([
+        await authRepository.register(body, hashadPassword),
+        await authRepository.actionToken(body, actionToken),
+      ]);
 
       await emailService.sendEmail(body.email, EEmailAction.REGISTER, {
         name: body.name + ", " || " ",
@@ -26,17 +34,20 @@ class AuthService {
     }
   }
 
-  public async verifyUser(actionToken: string): Promise<void> {
-    const user = (await User.findOne({ actionToken })) as IUser;
-    if (!user) {
-      throw new ApiError("Invalid or expired token", 401);
-    }
+  public async activatedUser(
+    activated: IActivatedModel,
+    user: IUser,
+  ): Promise<void> {
+    Promise.all([
+      await authRepository.verifyUser(user),
+      await authRepository.deleteActivated(activated),
+    ]);
 
-    await authRepository.verifyUser(user);
     await emailService.welcomeEmail(user.email, EEmailAction.WELCOME, {
       name: user.name + ", " || " ",
     });
   }
+
   public async login(body: ICredentials): Promise<IJwt> {
     const { email } = body;
     const user = await authRepository.findOne(email);
@@ -61,13 +72,11 @@ class AuthService {
     return await authRepository.forgotPassword(body, newPassword);
   }
 
-  public async verifyAganUser(user: IUser): Promise<void> {
-    if (!user.verify) {
-      await emailService.sendEmail(user.email, EEmailAction.REGISTER, {
-        name: user.name + ", " || " ",
-        actionToken: user.actionToken,
-      });
-    }
+  public async activatedAgainUser(user: IUser): Promise<void> {
+    await emailService.sendEmail(user.email, EEmailAction.REGISTER, {
+      name: user.name + ", " || " ",
+      actionToken: user.actionToken,
+    });
   }
 }
 
