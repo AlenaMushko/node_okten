@@ -86,6 +86,20 @@ class AuthMiddleware {
       next(e);
     }
   }
+
+  public async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await authRepository.findOne(req.body.email);
+      if (!user) {
+        throw new ApiError("User not found", 404);
+      }
+
+      res.locals.user = user;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
   public async activatedAgainUser(
     req: Request,
     res: Response,

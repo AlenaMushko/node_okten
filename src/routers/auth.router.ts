@@ -32,7 +32,12 @@ router.post(
   authController.activatedAgainUser,
 );
 
-router.patch("/forgotPassword", authController.forgotPassword);
+router.patch(
+  "/forgotPassword",
+  commonMiddleware.isBodyValid(userSchema.login),
+  authMiddleware.forgotPassword,
+  authController.forgotPassword,
+);
 
 router.post(
   "/login",

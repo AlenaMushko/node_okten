@@ -89,7 +89,6 @@ class EmailService {
     emailAction: EEmailAction,
     context: Record<string, string | number> = {},
   ) {
-    // forgot-password
     try {
       const { subject, templateName } = templates[emailAction];
       const mailOptions = {

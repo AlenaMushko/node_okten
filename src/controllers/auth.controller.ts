@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { authService, passwordService, tokenService } from "../services";
+import { authService, tokenService } from "../services";
 import { IJwt, IMessage, IUser } from "../types";
 
 class AuthController {
@@ -109,13 +109,11 @@ class AuthController {
     next: NextFunction,
   ): Promise<Response<IUser>> {
     try {
-      const newPassword = "123As";
-      const hashadPassword = await passwordService.hash(newPassword);
+      const user = res.locals.user;
+      const newPassword = req.body.password;
 
-      const updateUser = await authService.forgotPassword(
-        req.body,
-        hashadPassword,
-      );
+      const updateUser = await authService.forgotPassword(user, newPassword);
+
       return res.status(200).json(updateUser);
     } catch (e) {
       next(e);

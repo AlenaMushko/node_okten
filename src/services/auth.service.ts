@@ -69,7 +69,24 @@ class AuthService {
     body: IUser,
     newPassword: string,
   ): Promise<IUser> {
-    return await authRepository.forgotPassword(body, newPassword);
+    const hashadPassword = await passwordService.hash(newPassword);
+
+    const updatedUser = await authRepository.forgotPassword(
+      body,
+      hashadPassword,
+    );
+
+    await emailService.forgotPassword(
+      body.email,
+      EEmailAction.FORGOT_PASSWORD,
+      {
+        name: body.name + ", " || " ",
+        email: body.email,
+        password: newPassword,
+      },
+    );
+
+    return updatedUser;
   }
 
   public async activatedAgainUser(user: IUser): Promise<void> {

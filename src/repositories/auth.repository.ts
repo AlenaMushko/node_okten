@@ -48,8 +48,8 @@ class AuthRepository {
     newPassword: string,
   ): Promise<IUser> {
     return (await User.findByIdAndUpdate(
-      body.email,
-      { ...body, password: newPassword },
+      body._id,
+      { password: newPassword },
       { new: true },
     )) as unknown as IUser;
   }
