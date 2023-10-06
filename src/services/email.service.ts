@@ -103,6 +103,25 @@ class EmailService {
       throw new ApiError(e.message, e.status);
     }
   }
+  public async resetPassword(
+    email: string,
+    emailAction: EEmailAction,
+    context: Record<string, string | number> = {},
+  ) {
+    try {
+      const { subject, templateName } = templates[emailAction];
+      const mailOptions = {
+        to: email,
+        subject: subject,
+        template: templateName,
+        context,
+      };
+
+      return await this.transporter.sendMail(mailOptions);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
 }
 
 export const emailService = new EmailService();

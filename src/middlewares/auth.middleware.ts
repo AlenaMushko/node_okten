@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
+import { ForgotPassword } from "../models";
 import { authRepository, userRepository } from "../repositories";
 import { passwordService } from "../services";
+import { IActivatedModel } from "../types";
 
 class AuthMiddleware {
   public async uniqueEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await authRepository.findOne(req.body.email);
-
       if (user) {
         throw new ApiError("Email already exists", 409);
       }
@@ -87,7 +88,7 @@ class AuthMiddleware {
     }
   }
 
-  public async forgotPassword(req: Request, res: Response, next: NextFunction) {
+  public async isUserByEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await authRepository.findOne(req.body.email);
       if (!user) {
@@ -95,6 +96,29 @@ class AuthMiddleware {
       }
 
       res.locals.user = user;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async isForgotPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { resetToken } = req.params;
+
+      const forgotPassword = (await ForgotPassword.findOne({
+        accessToken: resetToken,
+      })) as unknown as IActivatedModel;
+      if (!forgotPassword) {
+        throw new ApiError("Token not valid", 401);
+      }
+
+      res.locals.userId = forgotPassword._userId;
+      res.locals.tokenId = forgotPassword._id;
       next();
     } catch (e) {
       next(e);

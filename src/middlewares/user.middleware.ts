@@ -10,7 +10,7 @@ class UserMiddleware {
     next: NextFunction,
   ) {
     try {
-      const { userId } = req.params;
+      const userId = req.params.userId || res.locals.userId;
       const user = await userRepository.findById(userId);
 
       if (!user) {

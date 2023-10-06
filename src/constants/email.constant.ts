@@ -9,6 +9,10 @@ export const templates = {
     templateName: "forgot-password",
     subject: "Do not worry, we control your password",
   },
+  [EEmailAction.RESET_PASSWORD]: {
+    templateName: "reset-password",
+    subject: "Congratulations you successfully resetting your password",
+  },
   [EEmailAction.WELCOME]: {
     templateName: "welcome",
     subject: "Congratulations, you have successfully verified",

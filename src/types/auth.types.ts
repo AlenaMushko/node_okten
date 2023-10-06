@@ -16,7 +16,7 @@ export interface ITokenPayload {
 }
 
 export interface ITokensPair {
-  userId: ObjectId;
+  userId?: ObjectId;
   name: string;
 }
 
@@ -32,10 +32,11 @@ export interface IToken extends IJwt, Document {
 
 export interface IActivated {
   accessToken: string;
+  userEmail: string;
 }
 
 export interface IActivatedModel extends Document {
   _id: ObjectId;
   accessToken: string;
-  userEmail: string;
+  _userId?: ObjectId | IUser;
 }

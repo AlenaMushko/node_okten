@@ -1,4 +1,4 @@
-import { Activated, User } from "../models";
+import { Activated, ForgotPassword, User } from "../models";
 import { IActivated, IActivatedModel, ITokenPayload, IUser } from "../types";
 
 class AuthRepository {
@@ -43,6 +43,19 @@ class AuthRepository {
     )) as unknown as IUser;
   }
 
+  public async createForgotPassword(
+    body: IUser,
+    actionToken: string,
+  ): Promise<IActivatedModel> {
+    return (await ForgotPassword.create({
+      accessToken: actionToken,
+      _userId: body._id,
+    })) as unknown as IActivatedModel;
+  }
+
+  public async deleteForgotPassword(_id: ITokenPayload): Promise<void> {
+    await ForgotPassword.findByIdAndDelete({ _id });
+  }
   public async forgotPassword(
     body: IUser,
     newPassword: string,

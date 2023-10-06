@@ -11,6 +11,7 @@ class AuthController {
   ): Promise<Response<IMessage>> {
     try {
       const actionToken = await tokenService.generateVerifyToken(req.body);
+
       await authService.register(req.body, actionToken);
 
       return res.status(201).json("User created");
@@ -18,6 +19,7 @@ class AuthController {
       next(e);
     }
   }
+
   public async login(
     req: Request,
     res: Response,
@@ -107,14 +109,30 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response<IUser>> {
+  ): Promise<Response<IMessage>> {
     try {
       const user = res.locals.user;
+      await authService.forgotPassword(user);
+
+      return res.status(200).json("Send forgot password letter successful");
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async resetPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const user = res.locals.user;
+      const tokenId = res.locals.tokenId;
       const newPassword = req.body.password;
 
-      const updateUser = await authService.forgotPassword(user, newPassword);
+      await authService.resetPassword(user, newPassword, tokenId);
 
-      return res.status(200).json(updateUser);
+      return res.status(200).json("Updated user password");
     } catch (e) {
       next(e);
     }

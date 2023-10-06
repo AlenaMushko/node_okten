@@ -21,8 +21,10 @@ class TokenService {
   }
 
   public generateVerifyToken(email: string): string {
-    return jwt.sign(email, accessTokenSecret, {
-      expiresIn: "1h",
+    const payload = { email: email };
+
+    return jwt.sign(payload, accessTokenSecret, {
+      expiresIn: "10d",
     });
   }
   public async logout(id: ITokenPayload): Promise<void> {

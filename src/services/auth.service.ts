@@ -65,28 +65,37 @@ class AuthService {
     return await authRepository.updateUser(userId, body);
   }
 
-  public async forgotPassword(
-    body: IUser,
-    newPassword: string,
-  ): Promise<IUser> {
-    const hashadPassword = await passwordService.hash(newPassword);
-
-    const updatedUser = await authRepository.forgotPassword(
-      body,
-      hashadPassword,
-    );
+  public async forgotPassword(body: IUser): Promise<void> {
+    const actionToken = await tokenService.generateVerifyToken(body.email);
+    await authRepository.createForgotPassword(body, actionToken);
 
     await emailService.forgotPassword(
       body.email,
       EEmailAction.FORGOT_PASSWORD,
       {
         name: body.name + ", " || " ",
-        email: body.email,
-        password: newPassword,
+        actionToken,
       },
     );
+  }
 
-    return updatedUser;
+  public async resetPassword(
+    body: IUser,
+    newPassword: string,
+    tokenId: ITokenPayload,
+  ): Promise<void> {
+    const hashadPassword = await passwordService.hash(newPassword);
+
+    Promise.all([
+      await authRepository.forgotPassword(body, hashadPassword),
+      await authRepository.deleteForgotPassword(tokenId),
+    ]);
+
+    await emailService.resetPassword(body.email, EEmailAction.RESET_PASSWORD, {
+      name: body.name + ", " || " ",
+      email: body.email,
+      password: newPassword,
+    });
   }
 
   public async activatedAgainUser(user: IUser): Promise<void> {

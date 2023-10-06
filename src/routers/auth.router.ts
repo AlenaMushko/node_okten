@@ -5,6 +5,7 @@ import {
   authenticateMiddleware,
   authMiddleware,
   commonMiddleware,
+  userMiddleware,
 } from "../middlewares";
 import { userSchema } from "../validations";
 
@@ -32,11 +33,19 @@ router.post(
   authController.activatedAgainUser,
 );
 
-router.patch(
+router.post(
   "/forgotPassword",
-  commonMiddleware.isBodyValid(userSchema.login),
-  authMiddleware.forgotPassword,
+  commonMiddleware.isBodyValid(userSchema.activated),
+  authMiddleware.isUserByEmail,
   authController.forgotPassword,
+);
+
+router.get(
+  "/reset-password/:resetToken",
+  commonMiddleware.isBodyValid(userSchema.login),
+  authMiddleware.isForgotPassword,
+  userMiddleware.findByIdByThrow,
+  authController.resetPassword,
 );
 
 router.post(
