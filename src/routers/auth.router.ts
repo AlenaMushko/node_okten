@@ -5,7 +5,6 @@ import {
   authenticateMiddleware,
   authMiddleware,
   commonMiddleware,
-  userMiddleware,
 } from "../middlewares";
 import { userSchema } from "../validations";
 
@@ -40,11 +39,18 @@ router.post(
   authController.forgotPassword,
 );
 
+router.post(
+  "/change-password",
+  commonMiddleware.isBodyValid(userSchema.changePassword),
+  authenticateMiddleware.isLogin,
+  authController.changePassword,
+);
+
 router.get(
   "/reset-password/:resetToken",
-  commonMiddleware.isBodyValid(userSchema.login),
+  commonMiddleware.isBodyValid(userSchema.resetPassword),
   authMiddleware.isForgotPassword,
-  userMiddleware.findByIdByThrow,
+  authMiddleware.isUserByEmail,
   authController.resetPassword,
 );
 

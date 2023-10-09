@@ -56,4 +56,12 @@ export class userSchema {
   static activated = Joi.object({
     email: this.email.required(),
   });
+  static resetPassword = Joi.object({
+    password: this.password.required(),
+  });
+
+  static changePassword = Joi.object({
+    oldPassword: this.password.required(),
+    newPassword: this.password.required(),
+  });
 }

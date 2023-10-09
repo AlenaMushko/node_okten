@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
-import { ForgotPassword } from "../models";
 import { authRepository, userRepository } from "../repositories";
 import { passwordService } from "../services";
-import { IActivatedModel } from "../types";
 
 class AuthMiddleware {
   public async uniqueEmail(req: Request, res: Response, next: NextFunction) {
@@ -90,7 +88,8 @@ class AuthMiddleware {
 
   public async isUserByEmail(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await authRepository.findOne(req.body.email);
+      const userEmail = req.body.email || res.locals.userEmail;
+      const user = await authRepository.findOne(userEmail);
       if (!user) {
         throw new ApiError("User not found", 404);
       }
@@ -110,14 +109,12 @@ class AuthMiddleware {
     try {
       const { resetToken } = req.params;
 
-      const forgotPassword = (await ForgotPassword.findOne({
-        accessToken: resetToken,
-      })) as unknown as IActivatedModel;
+      const forgotPassword = await authRepository.findActivated(resetToken);
       if (!forgotPassword) {
         throw new ApiError("Token not valid", 401);
       }
 
-      res.locals.userId = forgotPassword._userId;
+      res.locals.userEmail = forgotPassword.userEmail;
       res.locals.tokenId = forgotPassword._id;
       next();
     } catch (e) {

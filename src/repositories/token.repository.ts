@@ -1,21 +1,38 @@
-import { Token } from "../models/Token.modal";
+import { ApiError } from "../errors";
+import { Token } from "../models/Token.model";
 import { IToken, ITokenPayload } from "../types";
 
 class TokenRepository {
   public async createToken(body: Partial<IToken>): Promise<IToken> {
-    return await Token.create(body);
+    try {
+      return await Token.create(body);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async getByID(userId: ITokenPayload): Promise<IToken> {
-    return await Token.findOne({ _userId: userId });
+    try {
+      return await Token.findOne({ _userId: userId });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async logout(_id: ITokenPayload): Promise<void> {
-    await Token.deleteOne({ _id });
+    try {
+      await Token.deleteOne({ _id });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async findOne(token: string): Promise<IToken> {
-    return await Token.findOne({ accessToken: token });
+    try {
+      return await Token.findOne({ accessToken: token });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 }
 

@@ -2,6 +2,11 @@ import { model, Schema } from "mongoose";
 
 import { IActivated } from "../types";
 
+export enum EActionActivatedTokenTypes {
+  Activated = "activated",
+  ForgotPassword = "forgotPassword",
+}
+
 const activatedSchema = new Schema(
   {
     accessToken: {
@@ -15,6 +20,11 @@ const activatedSchema = new Schema(
       trim: true,
       lowercase: true,
       required: [true, "Email is required"],
+    },
+    tokenType: {
+      required: true,
+      type: String,
+      enum: EActionActivatedTokenTypes,
     },
   },
   {
