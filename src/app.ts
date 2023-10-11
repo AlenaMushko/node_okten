@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import * as mongoose from "mongoose";
 
 import { configs } from "./config";
+import { cronRunner } from "./cronns";
 import { authRouter, carRouter, userRouter } from "./routers";
 
 const app = express();
@@ -23,6 +24,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(PORT, () => {
+  cronRunner();
+
   if (typeof configs.DB_URI === "string") {
     mongoose.connect(configs.DB_URI);
   } else {
