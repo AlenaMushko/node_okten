@@ -59,13 +59,20 @@ class AuthenticateMiddleware {
         throw new ApiError("Access Denied. No refresh token provided", 401);
       }
 
-      const user = await userRepository.findOne(tokenObj);
-      if (!user) {
-        throw new ApiError("Token not valid", 401);
+      res.locals.tokenObj = tokenObj;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async isUserVerify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = res.locals.user;
+      if (!user.verify) {
+        throw new ApiError("User not verified", 401);
       }
 
-      res.locals.user = user;
-      res.locals.tokenObj = tokenObj;
       next();
     } catch (e) {
       next(e);

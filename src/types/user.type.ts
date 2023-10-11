@@ -8,4 +8,6 @@ export interface IUser extends Document {
   email: string;
   password: string;
   gender?: EGenders;
+  verify: boolean;
+  actionToken: string;
 }

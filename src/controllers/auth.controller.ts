@@ -17,13 +17,14 @@ class AuthController {
       next(e);
     }
   }
+
   public async login(
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response<IJwt>> {
     try {
-      const tokenPair = await authService.login(req.body);
+      const tokenPair = await authService.login(res.locals.user);
       return res.status(200).json({ ...tokenPair });
     } catch (e) {
       next(e);
@@ -35,6 +36,37 @@ class AuthController {
       const user = res.locals.user;
 
       return res.status(200).json(user) as unknown as IUser;
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async activatedUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const activated = res.locals.activated;
+      const user = res.locals.user;
+      await authService.activatedUser(activated, user);
+
+      return res.status(200).json("Verification successful");
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async activatedAgainUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const user = res.locals.user;
+      await authService.activatedAgainUser(user);
+
+      return res.status(200).json("Send verification letter again successful");
     } catch (e) {
       next(e);
     }
@@ -66,6 +98,56 @@ class AuthController {
       const user = res.locals.user;
       const updateUser = await authService.updateUser(user._id, req.body);
       return res.status(200).json(updateUser);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async forgotPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const user = res.locals.user;
+      await authService.forgotPassword(user);
+
+      return res.status(200).json("Send forgot password letter successful");
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async changePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const user = res.locals.user;
+      const body = req.body;
+
+      authService.changePassword(user, body);
+
+      return res.status(200).json("Change user password success");
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async resetPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IMessage>> {
+    try {
+      const user = res.locals.user;
+      const tokenId = res.locals.tokenId;
+      const newPassword = req.body.password;
+
+      await authService.resetPassword(user, newPassword, tokenId);
+
+      return res.status(200).json("Updated user password success");
     } catch (e) {
       next(e);
     }

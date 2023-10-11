@@ -12,11 +12,11 @@ export interface ICredentials {
 }
 
 export interface ITokenPayload {
-  id: ObjectId;
+  _id: ObjectId;
 }
 
 export interface ITokensPair {
-  userId: ObjectId;
+  userId?: ObjectId;
   name: string;
 }
 
@@ -26,6 +26,17 @@ export interface IJwt {
 }
 
 export interface IToken extends IJwt, Document {
-  _id: ObjectId;
-  _userId: ObjectId | IUser;
+  _id: ITokenPayload;
+  _userId?: ObjectId | IUser;
+}
+
+export interface IActivated extends Document {
+  _id: ITokenPayload;
+  accessToken: string;
+  userEmail: string;
+}
+
+export interface IChangePassword {
+  oldPassword: string;
+  newPassword: string;
 }

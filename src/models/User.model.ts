@@ -32,6 +32,10 @@ const userSchema = new Schema(
       type: String,
       enum: EGenders,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
