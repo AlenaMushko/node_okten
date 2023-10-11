@@ -18,7 +18,7 @@ router.post(
 );
 
 router.get(
-  "/n activated/:actionToken",
+  "/activated/:actionToken",
   authMiddleware.isActivated,
   authMiddleware.activatedUser,
   authController.activatedUser,
