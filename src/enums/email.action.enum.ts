@@ -3,4 +3,5 @@ export enum EEmailAction {
   FORGOT_PASSWORD,
   RESET_PASSWORD,
   WELCOME,
+  CRON_HELLO,
 }

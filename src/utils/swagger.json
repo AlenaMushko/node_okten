@@ -1,0 +1,147 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "SWAGGER FOR HW FOR NODE_OKTEN",
+    "version": "1.0.0",
+    "title": "HW-NODE_OKTEN",
+    "contact": {
+      "email": "myshko.alona@gmail.com"
+    }
+  },
+  "paths":{
+    "/users": {
+      "get": {
+        "summary": "Find all User",
+        "responses": {
+          "200": {
+            "description": "RETURNED ALL USERS",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new User",
+        "description": "This can only be done by the logged in user.",
+        "responses": {
+          "200": {
+            "description": "RETURNED ALL USERS",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Body not valid"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "summary": "Finds User by ID",
+        "description": "This can only be done by the logged in user.",
+      "responses": {
+        "200": {
+          "description": "RETURNED A SINGLE USER",
+          "schema": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "404": {
+          "description": "User not found"
+        }
+      }
+      },
+      "put": {
+        "summary": "Update User",
+        "description": "This can only be done by the logged in user.",
+        "responses": {
+          "200": {
+            "description": "RETURNED UPDATED USER",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Body not valid or Not valid Id"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update User",
+        "description": "This can only be done by the logged in user.",
+        "responses": {
+          "200": {
+            "description": "RETURNED UPDATED USER",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Body not valid or Not valid Id"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User",
+        "description": "This can only be done by the logged in user.",
+        "responses": {
+          "200": {
+            "description": "RETURNED A MESSAGE",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Body not valid or Not valid Id"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "number"},
+        "email": {"type": "string"},
+        "password": {"type": "string"},
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female"],
+          "description": "The gender of the user. Can be 'male' or 'female'."
+        },
+        "verify": {"type": "boolean"},
+        "actionToken": {"type": "string"},
+        "lastVisited": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the user visited the site."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time when the user was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time when the user was last updated."
+        }
+      },
+      "required": ["email", "password", "lastVisited"]
+    }
+  }
+
+}

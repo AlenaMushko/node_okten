@@ -1,7 +1,7 @@
 import { EEmailAction } from "../enums/email.action.enum";
 import { ApiError } from "../errors";
 import { EActionActivatedTokenTypes } from "../models";
-import { authRepository } from "../repositories";
+import { authRepository, userRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
 import {
   IActivated,
@@ -68,7 +68,12 @@ class AuthService {
         userId: user._id,
         name: user.name,
       });
-      await tokenRepository.createToken({ ...tokensPair, _userId: user._id });
+      Promise.all([
+        await tokenRepository.createToken({ ...tokensPair, _userId: user._id }),
+        await userRepository.updateByIdPatch(user._id, {
+          lastVisited: new Date(),
+        }),
+      ]);
 
       return tokensPair;
     } catch (e) {
