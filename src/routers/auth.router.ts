@@ -24,7 +24,7 @@ router.get(
   authController.activatedUser,
 );
 
-//якщо верифікаційний лист загубився, відправити ще один
+//якщо верифікаційний лист загубився, відправити ще один лист
 router.post(
   "/activated",
   commonMiddleware.isBodyValid(userSchema.activated),
