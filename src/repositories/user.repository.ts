@@ -27,7 +27,10 @@ class UserRepository {
     )) as unknown as IUser;
   }
 
-  public async updateByIdPatch(userId: string, value: IUser): Promise<IUser> {
+  public async updateByIdPatch(
+    userId: string,
+    value: Partial<IUser>,
+  ): Promise<IUser> {
     return (await User.findByIdAndUpdate(
       userId,
       { ...value },

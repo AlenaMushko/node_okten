@@ -17,4 +17,8 @@ export const templates = {
     templateName: "welcome",
     subject: "Congratulations, you have successfully verified",
   },
+  [EEmailAction.CRON_HELLO]: {
+    templateName: "cron-hello",
+    subject: "Hello, we mees you",
+  },
 };

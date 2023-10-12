@@ -31,6 +31,7 @@ export class userSchema {
       "{{#label}} must be 3 to 20 characters, contain at least one lowercase letter, one uppercase letter, and one number.",
     "any.required": "{{#label}} is required!!",
   });
+  static lastVisited = Joi.date().optional();
 
   static create = Joi.object({
     name: this.userName.required(),
@@ -51,6 +52,7 @@ export class userSchema {
   static login = Joi.object({
     email: this.email.required(),
     password: this.password.required(),
+    lastVisited: this.lastVisited,
   });
 
   static activated = Joi.object({
