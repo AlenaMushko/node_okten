@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { configs } from "../config";
 import { ApiError } from "../errors";
 import { EActionActivatedTokenTypes } from "../models";
+import { userRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
 import { IJwt, ITokenPayload, ITokensPair, IUser } from "../types";
 
@@ -66,6 +67,9 @@ class TokenService {
       await Promise.all([
         await tokenRepository.logout(_id),
         await tokenRepository.createToken({ ...tokensPair, _userId: user._id }),
+        await userRepository.updateByIdPatch(user._id, {
+          lastVisited: new Date(),
+        }),
       ]);
       return tokensPair;
     } catch (e) {

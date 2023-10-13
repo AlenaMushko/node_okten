@@ -1,8 +1,18 @@
-import { model, Schema } from "mongoose";
+import { Model, model, Schema } from "mongoose";
+
+import { IUser } from "../types";
 
 export enum EGenders {
   Male = "male",
   Female = "female",
+}
+
+export interface IUserModel extends Model<IUser, object, IUserMethods> {
+  findByName(name: string): Promise<IUser>;
+}
+
+export interface IUserMethods {
+  nameWithAge(): string;
 }
 
 const userSchema = new Schema(
@@ -48,4 +58,15 @@ const userSchema = new Schema(
   },
 );
 
-export const User = model("user", userSchema);
+userSchema.statics = {
+  async findByName(name: string): Promise<IUser> {
+    return this.findOne({ name });
+  },
+};
+
+userSchema.methods = {
+  nameWithAge() {
+    return `${this.name} is ${this.age} years old`;
+  },
+};
+export const User = model<IUser, IUserModel>("user", userSchema);
