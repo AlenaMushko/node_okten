@@ -1,11 +1,21 @@
-import { Car } from "../models/Car.model";
+import { Car, User } from "../models";
 import { ICar } from "../types";
 
 class CarRepository {
-  public async getAll(): Promise<ICar[]> {
-    return await Car.find();
+  public async searchByQuery(
+    searchObj: {
+      [key: string]: string;
+    },
+    skip: number,
+    sortedBy: string,
+    limit: string,
+  ): Promise<ICar[]> {
+    return await Car.find(searchObj).skip(skip).limit(+limit).sort(sortedBy);
   }
 
+  public async count(searchObj: { [key: string]: string }): Promise<number> {
+    return await User.count(searchObj);
+  }
   public async getAllOwner(id: object): Promise<ICar[]> {
     return (await Car.find({ ownerId: id }).populate(
       //коли отримує машинки юзера, і хочемо щне дані того юзера мати відразу

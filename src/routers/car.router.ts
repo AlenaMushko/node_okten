@@ -10,7 +10,7 @@ import { carSchema } from "../validations/carValidation";
 
 const router = Router();
 
-router.get("/", authenticateMiddleware.isLogin, carController.getAll);
+router.get("/", carController.getAll);
 
 router.get("/owner", authenticateMiddleware.isLogin, carController.getAllOwner);
 

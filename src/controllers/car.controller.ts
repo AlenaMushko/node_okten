@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { carService } from "../services";
 import { ICar } from "../types";
+import { IQuery } from "../types/query.types";
 
 class CarController {
   public async getAll(
@@ -10,7 +11,9 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar[]>> {
     try {
-      const cars = await carService.getAll();
+      const cars = await carService.findWithPagination(
+        req.query as unknown as IQuery,
+      );
 
       return res.status(200).json(cars);
     } catch (e) {
