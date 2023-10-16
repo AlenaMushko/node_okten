@@ -1,5 +1,3 @@
-import { FilterQuery } from "mongoose";
-
 import { ApiError } from "../errors";
 import { User } from "../models";
 import { IToken, IUser } from "../types";
@@ -46,29 +44,23 @@ class UserRepository {
     return (await User.deleteOne({ _id: userId })) as unknown as IUser;
   }
 
-  public async searchByQuery(searchObj: {
-    [key: string]: string;
-  }): Promise<IUser[]> {
+  public async searchByQuery(
+    searchObj: {
+      [key: string]: string;
+    },
+    skip: number,
+    sortedBy: string,
+    limit: string,
+  ): Promise<IUser[]> {
     try {
-      // Construct a filter query based on searchObj
-      const filter: FilterQuery<IUser> = {};
-
-      // Assuming that the keys in searchObj correspond to fields in your User model
-      for (const key in searchObj) {
-        if (Object.prototype.hasOwnProperty.call(searchObj, key)) {
-          filter[key] = searchObj[key];
-        }
-      }
-
-      const users = await User.find(filter);
-      return users;
+      return await User.find(searchObj).skip(skip).limit(+limit).sort(sortedBy);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
   }
 
-  public async count(): Promise<number> {
-    return await User.count();
+  public async count(searchObj: { [key: string]: string }): Promise<number> {
+    return await User.count(searchObj);
   }
 
   public async findWithoutActivityAfterDate(date: string): Promise<IUser[]> {

@@ -1,5 +1,4 @@
 import { ApiError } from "../errors";
-import { User } from "../models";
 import { userRepository } from "../repositories";
 import { IUser } from "../types";
 import { IPaginationResponse, IQuery } from "../types/query.types";
@@ -62,12 +61,10 @@ class UserService {
 
       const skip = +limit * (+page - 1);
 
-      const users = await User.find(searchObj)
-        .skip(skip)
-        .limit(+limit)
-        .sort(sortedBy);
-      // const users = await userRepository.searchByQuery(searchObj);
-      const allUsers = await userRepository.count();
+      const [users, allUsers] = await Promise.all([
+        userRepository.searchByQuery(searchObj, skip, sortedBy, limit),
+        userRepository.count(searchObj),
+      ]);
       return {
         page: +page,
         perPage: +limit,
