@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { carService } from "../services";
 import { ICar } from "../types";
+import { IQuery } from "../types/query.types";
 
 class CarController {
   public async getAll(
@@ -10,7 +11,9 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar[]>> {
     try {
-      const cars = await carService.getAll();
+      const cars = await carService.findWithPagination(
+        req.query as unknown as IQuery,
+      );
 
       return res.status(200).json(cars);
     } catch (e) {
@@ -39,8 +42,8 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar>> {
     try {
-      const { _id: ownerId } = res.locals.ownerUser;
-      const newCar = await carService.create({ ...req.body, ownerId });
+      const { _id: _ownerId } = res.locals.user;
+      const newCar = await carService.create({ ...req.body, _ownerId });
       return res.status(201).json({ message: "Car is created", car: newCar });
     } catch (e) {
       next(e);
@@ -67,8 +70,9 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar>> {
     try {
+      const { _id } = res.locals.user;
       const { carId } = req.params;
-      const updatedCar = await carService.updateByIdPut(carId, req.body);
+      const updatedCar = await carService.updateByIdPut(carId, req.body, _id);
 
       return res
         .status(200)
@@ -84,8 +88,9 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar>> {
     try {
+      const { _id } = res.locals.user;
       const { carId } = req.params;
-      const updatedCar = await carService.updateByIdPatch(carId, req.body);
+      const updatedCar = await carService.updateByIdPatch(carId, req.body, _id);
 
       return res
         .status(200)
@@ -101,8 +106,9 @@ class CarController {
     next: NextFunction,
   ): Promise<Response<ICar>> {
     try {
+      const { _id } = res.locals.user;
       const { carId } = req.params;
-      await carService.deleteById(carId);
+      await carService.deleteById(carId, _id);
 
       return res.status(200).json({ message: `Car id=${carId} is deleted` });
     } catch (e) {

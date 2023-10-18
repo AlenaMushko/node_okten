@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { userService } from "../services";
 import { IUser } from "../types";
+import { IQuery } from "../types/query.types";
 
 class UserController {
   public async findAll(
@@ -10,7 +11,9 @@ class UserController {
     next: NextFunction,
   ): Promise<Response<IUser[]>> {
     try {
-      const users = await userService.findAll();
+      const users = await userService.findWithPagination(
+        req.query as unknown as IQuery,
+      );
 
       return res.status(200).json(users);
     } catch (e) {

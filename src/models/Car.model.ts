@@ -1,4 +1,7 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
+
+import { ICar } from "../types";
+import { User } from "./User.model";
 
 const currentYear = new Date().getFullYear();
 
@@ -19,11 +22,10 @@ const carSchema = new Schema(
       min: [1, "Price min 1"],
       max: [1000000, "Price max 1000000"],
     },
-    ownerId: {
-      type: Schema.Types.ObjectId,
+    _ownerId: {
+      type: Types.ObjectId,
       required: true,
-      // //з якої колекції беремо юзера
-      ref: "user",
+      ref: User,
     },
   },
   {
@@ -32,4 +34,4 @@ const carSchema = new Schema(
   },
 );
 
-export const Car = model("car", carSchema);
+export const Car = model<ICar>("car", carSchema);
