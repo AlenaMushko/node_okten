@@ -1,3 +1,6 @@
+import { FilterQuery } from "mongoose";
+
+import { ApiError } from "../errors";
 import { Car, User } from "../models";
 import { ICar } from "../types";
 
@@ -10,46 +13,90 @@ class CarRepository {
     sortedBy: string,
     limit: string,
   ): Promise<ICar[]> {
-    return await Car.find(searchObj).skip(skip).limit(+limit).sort(sortedBy);
+    try {
+      return await Car.find(searchObj)
+        .skip(skip)
+        .limit(+limit)
+        .sort(sortedBy)
+        .populate("_ownerId");
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async count(searchObj: { [key: string]: string }): Promise<number> {
-    return await User.count(searchObj);
+    try {
+      return await User.count(searchObj);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
   public async getAllOwner(id: object): Promise<ICar[]> {
-    return (await Car.find({ ownerId: id }).populate(
-      //коли отримує машинки юзера, і хочемо щне дані того юзера мати відразу
-      "ownerId", //до якого поля доптсуємо
-      "name email", //які поля включити із user
-    )) as unknown as ICar[];
+    try {
+      return (await Car.find({ ownerId: id }).populate(
+        //коли отримує машинки юзера, і хочемо ще дані того юзера мати відразу
+        "_ownerId", //до якого поля доптсуємо
+        "name email", //які поля включити із user
+      )) as unknown as ICar[];
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async create(value: ICar): Promise<ICar> {
-    return (await Car.create({ ...value })) as unknown as ICar;
+    try {
+      return (await Car.create({ ...value })) as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async findById(id: string): Promise<ICar> {
-    return (await Car.findById(id)) as unknown as ICar;
+    try {
+      return (await Car.findById(id).populate("_ownerId")) as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async getOneByParams(params: FilterQuery<ICar>): Promise<ICar> {
+    try {
+      return await Car.findOne(params);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async updateByIdPut(id: string, value: ICar): Promise<ICar> {
-    return (await Car.findByIdAndUpdate(
-      id,
-      { ...value },
-      { new: true },
-    )) as unknown as ICar;
+    try {
+      return (await Car.findByIdAndUpdate(
+        id,
+        { ...value },
+        { new: true },
+      )) as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async updateByIdPatch(id: string, value: ICar): Promise<ICar> {
-    return (await Car.findByIdAndUpdate(
-      id,
-      { ...value },
-      { new: true },
-    )) as unknown as ICar;
+    try {
+      return (await Car.findByIdAndUpdate(
+        id,
+        { ...value },
+        { new: true },
+      )) as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async deleteById(id: string): Promise<ICar> {
-    return (await Car.deleteOne({ _id: id })) as unknown as ICar;
+    try {
+      return (await Car.deleteOne({ _id: id })) as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 }
 

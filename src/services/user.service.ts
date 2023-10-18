@@ -57,7 +57,7 @@ class UserService {
       //$lte: Less Than or Equal (Менше або Рівно)
       //$gt: Greater Than (Більше)
       //$lt: Less Than (Менше)
-      const { page = 1, limit = 6, sortedBy = "name", ...searchObj } = queryObg;
+      const { page, limit, sortedBy, ...searchObj } = queryObg;
 
       const skip = +limit * (+page - 1);
 
@@ -65,6 +65,7 @@ class UserService {
         userRepository.searchByQuery(searchObj, skip, sortedBy, limit),
         userRepository.count(searchObj),
       ]);
+
       return {
         page: +page,
         perPage: +limit,

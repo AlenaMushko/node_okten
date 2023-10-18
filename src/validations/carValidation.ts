@@ -21,19 +21,44 @@ export class carSchema {
     "string.min": "{{#label}} must be at least {{#limit}} $",
     "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
   });
+
   static ownerId = Joi.string();
+
+  static page = Joi.number().integer().min(1).max(500).default(1).messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
+
+  static limit = Joi.number().integer().min(1).max(50).default(9).messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
+
+  static sortedBy = Joi.string().default("price").messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
 
   static create = Joi.object({
     model: this.model.required(),
     year: this.year.required(),
     price: this.price.required(),
-    ownerId: this.ownerId,
+    _ownerId: this.ownerId,
   });
 
   static updateCarSchema = Joi.object({
     model: this.model,
     year: this.year,
     price: this.price,
-    ownerId: this.ownerId,
+    _ownerId: this.ownerId,
   }).or("model", "year", "price", "ownerId");
+
+  static queryCarSchema = Joi.object({
+    page: this.page,
+    limit: this.limit,
+    sortedBy: this.sortedBy,
+  });
 }

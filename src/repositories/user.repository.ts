@@ -59,7 +59,9 @@ class UserRepository {
     }
   }
 
-  public async count(searchObj: { [key: string]: string }): Promise<number> {
+  public async count(searchObj: {
+    [key: string]: string | number;
+  }): Promise<number> {
     return await User.count(searchObj);
   }
 

@@ -31,7 +31,26 @@ export class userSchema {
       "{{#label}} must be 3 to 20 characters, contain at least one lowercase letter, one uppercase letter, and one number.",
     "any.required": "{{#label}} is required!!",
   });
+
   static lastVisited = Joi.date().optional();
+
+  static page = Joi.number().integer().min(1).max(500).default(1).messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
+
+  static limit = Joi.number().integer().min(1).max(50).default(9).messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
+
+  static sortedBy = Joi.string().default("name").messages({
+    "number.base": "{{#label}} must be a number",
+    "string.min": "{{#label}} must be at least {{#limit}} $",
+    "string.max": "{{#label}}  must be less than or equal to {{#limit}} $",
+  });
 
   static create = Joi.object({
     name: this.userName.required(),
@@ -65,5 +84,11 @@ export class userSchema {
   static changePassword = Joi.object({
     oldPassword: this.password.required(),
     newPassword: this.password.required(),
+  });
+
+  static queryUserSchema = Joi.object({
+    page: this.page,
+    limit: this.limit,
+    sortedBy: this.sortedBy,
   });
 }

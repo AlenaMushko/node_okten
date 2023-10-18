@@ -6,7 +6,11 @@ import { userSchema } from "../validations";
 
 const router = Router();
 
-router.get("/", userController.findAll);
+router.get(
+  "/",
+  commonMiddleware.isQueryValid(userSchema.queryUserSchema),
+  userController.findAll,
+);
 
 router.post(
   "/",
