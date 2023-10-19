@@ -27,6 +27,9 @@ const carSchema = new Schema(
       required: true,
       ref: User,
     },
+    img: {
+      type: String,
+    },
   },
   {
     timestamps: true,

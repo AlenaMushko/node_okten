@@ -20,6 +20,7 @@ class AuthMiddleware {
   public async loginError(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await authRepository.findOne(req.body.email);
+
       if (!user) {
         throw new ApiError("Invalid email or password", 401);
       }

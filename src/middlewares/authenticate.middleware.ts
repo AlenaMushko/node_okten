@@ -13,6 +13,7 @@ class AuthenticateMiddleware {
   public async isLogin(req: Request, res: Response, next: NextFunction) {
     try {
       const { authorization } = req.headers;
+
       if (!authorization) {
         throw new ApiError("Authorization header missing", 401);
       }
@@ -21,9 +22,7 @@ class AuthenticateMiddleware {
       if (!bearer || !token) {
         throw new ApiError("Not authorized", 401);
       }
-
       const { userId } = jwt.verify(token, tokenSecret) as JwtPayload;
-
       const user = await userRepository.findById(userId);
       const tokenModel = await tokenRepository.getByID(userId);
 

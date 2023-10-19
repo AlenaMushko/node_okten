@@ -11,4 +11,5 @@ export interface IUser extends Document {
   verify: boolean;
   actionToken: string;
   lastVisited: Date;
+  avatar?: string;
 }

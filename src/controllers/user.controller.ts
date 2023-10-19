@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
 
+import { userPresenter } from "../presenters";
 import { userService } from "../services";
-import { IUser } from "../types";
-import { IQuery } from "../types/query.types";
+import { IQuery, IUser } from "../types";
 
 class UserController {
   public async findAll(
@@ -97,6 +98,25 @@ class UserController {
       await userService.deleteById(userId);
 
       return res.status(200).json({ message: `User id=${userId} is deleted` });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async uploadAvatar(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<IUser>> {
+    try {
+      const { userId } = req.params;
+      const avatar = req.files.avatar as UploadedFile;
+
+      const user = await userService.uploadAvatar(avatar, userId);
+
+      const presenterUser = userPresenter.present(user);
+
+      return res.status(200).json(presenterUser);
     } catch (e) {
       next(e);
     }

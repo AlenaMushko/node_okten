@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { userController } from "../controllers";
 import { commonMiddleware, userMiddleware } from "../middlewares";
+import { fileMiddleware } from "../middlewares/file.middleware";
 import { userSchema } from "../validations";
 
 const router = Router();
@@ -16,6 +17,13 @@ router.post(
   "/",
   commonMiddleware.isBodyValid(userSchema.create),
   userController.create,
+);
+
+router.post(
+  "/:userId/avatar",
+  commonMiddleware.isIdValid("userId"),
+  fileMiddleware.isAvatarValid,
+  userController.uploadAvatar,
 );
 
 router.get(

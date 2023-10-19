@@ -91,6 +91,21 @@ class CarRepository {
     }
   }
 
+  public async pushImagesToCar(id: string, imgsPaths: string[]): Promise<ICar> {
+    try {
+      const updatedCar = await Car.findByIdAndUpdate(
+        id,
+        {
+          $push: { img: { $each: imgsPaths } },
+        },
+        { new: true },
+      );
+      return updatedCar as unknown as ICar;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
   public async deleteById(id: string): Promise<ICar> {
     try {
       return (await Car.deleteOne({ _id: id })) as unknown as ICar;

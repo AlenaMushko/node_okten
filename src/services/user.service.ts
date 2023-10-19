@@ -1,7 +1,10 @@
+import { UploadedFile } from "express-fileupload";
+
+import { EFileTypes } from "../enums/file.enum";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
-import { IUser } from "../types";
-import { IPaginationResponse, IQuery } from "../types/query.types";
+import { IPaginationResponse, IQuery, IUser } from "../types";
+import { s3Service } from "./s3.service";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
@@ -73,6 +76,32 @@ class UserService {
         foundItems: users.length,
         data: users,
       };
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async uploadAvatar(
+    avatarFile: UploadedFile,
+    userId: string,
+  ): Promise<IUser> {
+    try {
+      const user = await userRepository.findById(userId);
+      if (user.avatar) {
+        await s3Service.deleteFile(user.avatar);
+      }
+
+      const filePath = await s3Service.uploadSingleFile(
+        avatarFile,
+        EFileTypes.User,
+        userId,
+      );
+
+      const updatedUser = await userRepository.updateByIdPatch(userId, {
+        avatar: filePath,
+      });
+
+      return updatedUser;
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

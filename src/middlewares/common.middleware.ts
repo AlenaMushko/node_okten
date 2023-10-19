@@ -3,16 +3,18 @@ import { ObjectSchema } from "joi";
 import mongoose from "mongoose";
 
 import { ApiError } from "../errors";
-import { IQuery } from "../types/query.types";
+import { IQuery } from "../types";
 
 class CommonMiddleware {
   public isIdValid(fileId: string) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const id = req.params[fileId];
+
         if (!mongoose.isObjectIdOrHexString(id)) {
           throw new ApiError("Not valid Id", 400);
         }
+
         next();
       } catch (e) {
         next(e);

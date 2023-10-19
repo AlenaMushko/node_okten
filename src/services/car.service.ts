@@ -1,7 +1,10 @@
+import { UploadedFile } from "express-fileupload";
+
+import { EFileTypes } from "../enums/file.enum";
 import { ApiError } from "../errors";
 import { carRepository } from "../repositories";
-import { ICar } from "../types";
-import { IPaginationResponse, IQuery } from "../types/query.types";
+import { ICar, IPaginationResponse, IQuery } from "../types";
+import { s3Service } from "./s3.service";
 
 class CarService {
   public async findWithPagination(
@@ -98,6 +101,37 @@ class CarService {
     try {
       await this.isCarOwnerThisUser(id, userId);
       return await carRepository.deleteById(id);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async uploadPhoto(
+    imgsFile: UploadedFile[] | UploadedFile,
+    carId: string,
+    userId: string,
+  ): Promise<ICar> {
+    try {
+      await this.isCarOwnerThisUser(carId, userId);
+      let imgsPaths: string[] = [];
+      if (Array.isArray(imgsFile)) {
+        imgsPaths = await s3Service.uploadFiles(
+          imgsFile,
+          EFileTypes.Car,
+          userId,
+        );
+      } else {
+        const singleImgPath = await s3Service.uploadSingleFile(
+          imgsFile,
+          EFileTypes.Car,
+          userId,
+        );
+        imgsPaths.push(singleImgPath);
+      }
+
+      const updatedCar = await carRepository.pushImagesToCar(carId, imgsPaths);
+
+      return updatedCar;
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
