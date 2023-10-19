@@ -9,7 +9,9 @@ class CarPresenter implements IPresenter<ICar, Partial<ICar>> {
       year: data.year,
       price: data.price,
       ownerId: data.ownerId,
-      img: `${configs.AWE_S3_URL}/${data.img}`,
+      img: Array.isArray(data.img)
+        ? data.img.map((path) => `${configs.AWE_S3_URL}/${path}`)
+        : `${configs.AWE_S3_URL}/${data.img}`,
     };
   }
 }

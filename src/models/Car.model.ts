@@ -28,7 +28,7 @@ const carSchema = new Schema(
       ref: User,
     },
     img: {
-      type: String,
+      type: [String],
     },
   },
   {

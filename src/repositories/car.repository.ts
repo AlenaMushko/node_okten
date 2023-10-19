@@ -91,10 +91,13 @@ class CarRepository {
     }
   }
 
-  public async pushImagesToCar(id: string, imgsPaths: string[]): Promise<ICar> {
+  public async pushImagesToCar(
+    _id: string,
+    imgsPaths: string[],
+  ): Promise<ICar> {
     try {
       const updatedCar = await Car.findByIdAndUpdate(
-        id,
+        _id,
         {
           $push: { img: { $each: imgsPaths } },
         },

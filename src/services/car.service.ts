@@ -130,7 +130,6 @@ class CarService {
       }
 
       const updatedCar = await carRepository.pushImagesToCar(carId, imgsPaths);
-
       return updatedCar;
     } catch (e) {
       throw new ApiError(e.message, e.status);
